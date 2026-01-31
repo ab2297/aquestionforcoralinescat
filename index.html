@@ -14,8 +14,6 @@
       --card: rgba(255,255,255,.72);
       --border: rgba(255,255,255,.55);
       --text: #151515;
-      --yes1:#2ecc71;
-      --yes2:#1f9d57;
       --no1:#ff4d4d;
       --no2:#cc2f2f;
       --shadow: 0 18px 60px rgba(0,0,0,.28);
@@ -77,6 +75,7 @@
       overflow:hidden;
     }
 
+    /* Ninja sticker */
     .ninja{
       position:absolute;
       right: 10px;
@@ -100,6 +99,7 @@
       filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));
     }
 
+    /* Bijan sticker */
     .bijan{
       position:absolute;
       right: 10px;
@@ -140,6 +140,7 @@
       overflow:hidden;
     }
 
+    /* NO button polish */
     .btn{
       -webkit-tap-highlight-color: transparent;
       border:0;
@@ -156,11 +157,11 @@
       transform: translateY(-50%);
       z-index: 4;
       touch-action: manipulation;
+
       transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap: 10px;
       letter-spacing: .2px;
     }
     .btn:hover{
@@ -169,60 +170,6 @@
     }
     .btn:active{ transform: translateY(-50%) scale(.97); }
 
-    <!-- QUICK FIX: replace your current YES button + add these CSS rules -->
-
-<!-- 1) Replace this (current YES button)
-<button class="btn" id="yesBtn" aria-label="Yes">
-  <img src="yes.png" alt="Yes" />
-</button>
--->
-
-<!-- With this (image-as-button) -->
-<button id="yesBtn" class="yesIconBtn" aria-label="Yes">
-  <img src="yes.png" alt="Yes" />
-</button>
-
-
-<style>
-  /* 2) Add this CSS anywhere in your <style> (preferably near other button styles) */
-
-  .yesIconBtn{
-    position:absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-
-    border: 0;
-    background: transparent;
-    padding: 0;
-    margin: 0;
-
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-
-    /* optional: feel nicer */
-    transition: transform .12s ease, filter .12s ease;
-  }
-
-  .yesIconBtn:hover{ filter: brightness(1.05); }
-  .yesIconBtn:active{ transform: translateY(-50%) scale(.97); }
-
-  .yesIconBtn img{
-    width: 96px;          /* ✅ make YES icon larger (tweak this) */
-    height: auto;
-    display:block;
-    user-select:none;
-    pointer-events:none;
-    filter: drop-shadow(0 14px 18px rgba(0,0,0,.28));
-  }
-
-  @media (max-width: 420px){
-    .yesIconBtn img{ width: 84px; }
-  }
-</style>
-
     #noBtn{
       left: 50%;
       color:#fff;
@@ -230,13 +177,36 @@
       z-index: 4;
     }
 
+    /* YES is now a clickable image (same width as old button) */
+    .yesImgBtn{
+      position:absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+
+      width: 175px;           /* ✅ same as old button width */
+      max-width: 40vw;
+      height: auto;
+
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+
+      filter: drop-shadow(0 14px 18px rgba(0,0,0,.28));
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .yesImgBtn:hover{ filter: brightness(1.05) drop-shadow(0 16px 22px rgba(0,0,0,.28)); }
+    .yesImgBtn:active{ transform: translateY(-50%) scale(.97); }
+
     /* Celebration GIF banner (hidden until YES) */
     .celebration{
       position:absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: calc(100% - 32px); /* spans across where both buttons were */
+      width: calc(100% - 32px);
       max-width: 520px;
       height:auto;
       z-index: 6;
@@ -246,6 +216,7 @@
     }
     .celebration.show{ display:block; }
 
+    /* Dog sticker */
     .dogChaser{
       position:absolute;
       width: 96px;
@@ -318,7 +289,7 @@
     @media (max-width: 420px){
       .arena{ height: 175px; }
       .btn{ width: 150px; font-size: 17px; }
-      #yesBtn img{ width: 28px; height: 28px; }
+      .yesImgBtn{ width: 150px; }
       .ninja{ width: 44px; }
       .bijan{ width: 68px; }
       .dogChaser{ width: 86px; }
@@ -342,9 +313,8 @@
       <div class="title">Will you be my valentine?</div>
 
       <div class="arena" id="arena">
-        <button class="btn" id="yesBtn" aria-label="Yes">
-          <img src="yes.png" alt="Yes" />
-        </button>
+        <!-- YES is now a clickable image (no button element) -->
+        <img id="yesImg" class="yesImgBtn" src="yes.png" alt="Yes" />
 
         <div class="dogChaser" id="dogChaser" aria-hidden="true">
           <img src="caspy.png" alt="dog" />
@@ -352,7 +322,7 @@
 
         <button class="btn" id="noBtn">No</button>
 
-        <!-- Appears after YES, spans across the arena -->
+        <!-- Appears after YES -->
         <img class="celebration" id="celebration" src="celebration.gif" alt="celebration" />
       </div>
 
@@ -371,7 +341,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <script>
-    const yesBtn = document.getElementById("yesBtn");
+    const yesImg = document.getElementById("yesImg");
     const noBtn = document.getElementById("noBtn");
     const arena = document.getElementById("arena");
     const dogChaser = document.getElementById("dogChaser");
@@ -473,7 +443,8 @@
       const minX = pad, maxX = a.width - btnW - pad;
       const minY = pad, maxY = a.height - btnH - pad;
 
-      const yesRect = yesBtn.getBoundingClientRect();
+      // Avoid overlapping YES image
+      const yesRect = yesImg.getBoundingClientRect();
       const yesLocal = { x: yesRect.left - a.left, y: yesRect.top - a.top, w: yesRect.width, h: yesRect.height };
 
       let best = null;
@@ -596,7 +567,7 @@
       confetti({ particleCount: 160, spread: 85, startVelocity: 45, origin:{x:.5,y:.55} });
     }
 
-    yesBtn.addEventListener("click", () => {
+    function onYes(){
       if (yesClicked) return;
       yesClicked = true;
 
@@ -607,27 +578,32 @@
 
       dogChaser.remove();
 
-      // remove both buttons
-      yesBtn.remove();
+      // remove YES image and NO button
+      yesImg.remove();
       noBtn.remove();
 
       // show celebration GIF banner across arena
       celebration.classList.add("show");
 
       bijan.classList.add("show");
-
       result.classList.add("show");
 
       spawnLoveRain();
       heartBurst();
       fireworks();
-    });
+    }
+
+    // clickable YES image
+    yesImg.addEventListener("click", onYes);
+    yesImg.addEventListener("pointerdown", (e) => { e.preventDefault?.(); onYes(); });
 
     window.addEventListener("load", () => {
       placeNoInitial();
       placeDogCenter();
+
       ninja.classList.remove("show");
       ninja.classList.add("hidden");
+
       bijan.classList.remove("show");
       celebration.classList.remove("show");
     });
