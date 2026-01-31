@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Valentine?</title>
 
+<!-- Cute fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
@@ -27,7 +28,7 @@ body{
   background:
     linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),
     url("background.jpg") center/cover no-repeat fixed;
-  padding: 16px; /* prevents edge clipping on mobile */
+  padding: 14px; /* helps on phones */
 }
 
 /* floating emojis */
@@ -49,28 +50,25 @@ body{
   to{transform:translateY(-110vh) rotate(360deg);opacity:0;}
 }
 
-.wrap{
-  width: min(620px, 96vw);
-}
+.wrap{width:min(620px,94vw);padding:22px;}
 
 .card{
   background:rgba(255,255,255,.72);
   border-radius:26px;
-  padding: clamp(16px, 3.2vw, 26px);
+  padding:26px;
   box-shadow:var(--shadow);
   backdrop-filter:blur(10px);
   text-align:center;
-  border: 1px solid rgba(255,255,255,.45);
   position: relative;
 }
 
-/* Cute question font */
+/* 💖 Cute question font */
 .title{
   font-family: "Pacifico", cursive;
-  font-size: clamp(30px, 6.3vw, 56px);
-  margin: 6px 0 14px;
-  line-height: 1.15;
+  font-size: clamp(36px,6vw,56px);
+  margin-bottom:14px;
   transition: opacity .4s ease, transform .4s ease;
+  line-height: 1.15;
 }
 .title.hide{
   opacity:0;
@@ -78,67 +76,54 @@ body{
   pointer-events:none;
 }
 
-/* ✅ Tight arena layout */
 .arena{
-  width: 100%;
-  max-width: 560px;
-  margin: 0 auto;
-  border-radius: 22px;
-  background: rgba(255,255,255,.28);
+  position:relative;
+  margin:20px auto;
+  width:min(560px,92vw);
+  height:170px;
+  border-radius:22px;
+  background:rgba(255,255,255,.28);
   border: 1px solid rgba(255,255,255,.45);
-  padding: 14px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr; /* YES | center | NO */
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  overflow: hidden;
+  overflow:hidden; /* ✅ keep everything inside */
 }
 
-/* Fixed “button” sizes so they don’t jump around */
-.yesWrap, .noWrap{
-  display:flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* clickable images */
+/* YES & NO image buttons (previous format) */
 .yesImgBtn,.noImgBtn{
-  width: 175px;          /* same as your old button */
-  max-width: 100%;
-  height: auto;
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:175px;         /* base size (desktop) */
+  height:auto;
   cursor:pointer;
   user-select:none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  filter: drop-shadow(0 14px 18px rgba(0,0,0,.28));
-  transition: transform .12s ease, filter .12s ease;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.28));
+  transition:transform .12s ease, filter .12s ease;
 }
 .yesImgBtn:hover,.noImgBtn:hover{
-  transform: scale(1.05);
+  transform:translateY(-50%) scale(1.05);
   filter: brightness(1.05) drop-shadow(0 16px 22px rgba(0,0,0,.28));
 }
 .yesImgBtn:active,.noImgBtn:active{
-  transform: scale(.95);
+  transform:translateY(-50%) scale(.95);
 }
 
-/* Center cell for dog */
-.centerCell{
-  width: 110px; /* gives the dog a stable “lane” */
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position: relative;
-}
+/* Keep your old anchor positions */
+.yesImgBtn{ left:16px; }
+.noImgBtn{ left:50%; }
 
 /* Dog */
 .dogChaser{
-  width: 96px;
+  position:absolute;
+  width:96px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
   pointer-events:none;
-  transition: transform .12s ease;
 }
-.dogChaser.front{ z-index: 7; }
-.dogChaser img{ width:100%; height:auto; display:block; }
+.dogChaser.front{z-index:7;}
+.dogChaser img{width:100%;}
 
 /* Celebration */
 .celebration{
@@ -146,69 +131,33 @@ body{
   left:50%;
   top:50%;
   transform:translate(-50%,-50%);
-  width: calc(100% - 24px);
-  max-width: 520px;
+  width:calc(100% - 32px);
+  max-width:520px;
   display:none;
   pointer-events:none;
   filter: drop-shadow(0 14px 18px rgba(0,0,0,.25));
 }
 .celebration.show{display:block;}
 
-/* Top stickers */
 .ninja,.bijan{
   position:absolute;
-  right:12px;
-  top:12px;
+  right:10px;
+  top:10px;
   display:none;
   pointer-events:none;
 }
 .ninja.show,.bijan.show{display:block;}
-.ninja img{width:50px;height:auto;}
-.bijan img{width:78px;height:auto;}
+.ninja img{width:50px;}
+.bijan img{width:78px;}
 
-/* Result */
-.result{
-  display:none;
-  margin-top: 14px;
-  font-family: "Fredoka", system-ui, sans-serif;
-}
+.result{display:none; font-family:"Fredoka", system-ui, sans-serif;}
 .result.show{display:block;}
-.result > div:first-child{
-  font-weight: 600;
-  font-size: clamp(18px, 4.2vw, 22px);
-  margin-bottom: 10px;
-}
-.photo img{
-  width: min(360px, 86vw);
-  height:auto;
-  display:block;
-  margin: 0 auto;
-  filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
-  border-radius: 10px;
-}
-
-/* ✅ Mobile: switch to 2 rows for extra stability */
-@media (max-width: 480px){
-  .arena{
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 10px;
-  }
-  .centerCell{
-    grid-column: 1 / -1;  /* dog spans both columns */
-    width: 100%;
-  }
-  .yesImgBtn,.noImgBtn{
-    width: 150px;
-  }
-  .dogChaser{
-    width: 86px;
-  }
-}
+.photo img{width:min(360px,82vw); height:auto; display:block; margin: 0 auto;}
 </style>
 </head>
 
 <body>
+
 <div class="flowers" id="flowers"></div>
 
 <div class="wrap">
@@ -220,25 +169,23 @@ body{
     <div class="title" id="titleText">Will you be my valentine?</div>
 
     <div class="arena" id="arena">
-      <div class="yesWrap">
-        <img id="yesImg" class="yesImgBtn" src="yes.png" alt="yes">
+
+      <img id="yesImg" class="yesImgBtn" src="yes.png" alt="yes">
+
+      <div class="dogChaser" id="dogChaser" aria-hidden="true">
+        <img src="caspy.png" alt="dog">
       </div>
 
-      <div class="centerCell">
-        <div class="dogChaser" id="dogChaser" aria-hidden="true">
-          <img src="caspy.png" alt="dog">
-        </div>
-      </div>
-
-      <div class="noWrap">
-        <img id="noImg" class="noImgBtn" src="no.png" alt="no">
-      </div>
+      <img id="noImg" class="noImgBtn" src="no.png" alt="no">
 
       <img id="celebration" class="celebration" src="celebration.gif" alt="celebration">
+
     </div>
 
     <div class="result" id="result">
-      <div>Yayyyyy!!! love you my g ❤️</div>
+      <div style="font-weight:600; font-size:clamp(18px,4vw,22px); margin-top:12px;">
+        Yayyyyy!!! love you my g ❤️
+      </div>
       <div class="photo"><img src="me.jpg" alt="me"></div>
     </div>
 
@@ -254,8 +201,10 @@ body{
 const yesImg = document.getElementById("yesImg");
 const noImg = document.getElementById("noImg");
 const dog = document.getElementById("dogChaser");
+const arena = document.getElementById("arena");
 const celebration = document.getElementById("celebration");
 const result = document.getElementById("result");
+const ninja = document.getElementById("ninja");
 const bijan = document.getElementById("bijan");
 const flowers = document.getElementById("flowers");
 const barkSound = document.getElementById("barkSound");
@@ -263,19 +212,20 @@ const yesSound = document.getElementById("yesSound");
 const titleText = document.getElementById("titleText");
 
 let yesClicked = false;
+let noAttemptedOnce = false;
 
 function playBark(){
-  try{ barkSound.currentTime = 0; barkSound.play(); }catch(e){}
+  try{ barkSound.currentTime=0; barkSound.play(); }catch(e){}
 }
 function playYes(){
-  try{ yesSound.currentTime = 0; yesSound.play(); }catch(e){}
+  try{ yesSound.currentTime=0; yesSound.play(); }catch(e){}
 }
 
 function spawnLoveRain(){
   flowers.classList.add("show");
-  const em = ["💖","🌹","💕","✨","💘","💝"];
-  const t = setInterval(()=>{
-    const d = document.createElement("div");
+  const em=["💖","🌹","💕","✨","💘","💝"];
+  const t=setInterval(()=>{
+    const d=document.createElement("div");
     d.className="flower";
     d.textContent=em[Math.floor(Math.random()*em.length)];
     d.style.left=Math.random()*100+"vw";
@@ -293,38 +243,96 @@ function spawnLoveRain(){
 
 function fireworks(){
   if (typeof confetti !== "function") return;
-  confetti({ particleCount: 160, spread: 80, startVelocity: 40, origin: {x:.5, y:.55} });
-  confetti({ particleCount: 60, spread: 60, startVelocity: 32, origin: {x:.5, y:.45}, shapes:["heart"] });
+  confetti({ particleCount: 170, spread: 80, startVelocity: 42, origin:{x:.5,y:.55} });
+  confetti({ particleCount: 70, spread: 60, startVelocity: 32, origin:{x:.5,y:.45}, shapes:["heart"] });
 }
 
-/* Dog blocks NO: just “pops” forward + wiggles in place (stable for mobile) */
-function blockNo(){
+/* ✅ Mobile fix: shrink YES/NO if they would overlap or spill out */
+function fitChoiceImages(){
   if (yesClicked) return;
-  playBark();
-  dog.classList.add("front");
-  dog.style.transform = "scale(1.06) rotate(-2deg)";
-  setTimeout(()=> dog.style.transform = "scale(1) rotate(2deg)", 90);
-  setTimeout(()=> dog.style.transform = "scale(1) rotate(0deg)", 180);
+
+  const a = arena.getBoundingClientRect();
+  const pad = 16;                // left padding already used by YES
+  const gap = 12;                // minimum gap between yes and no
+  const noLeftFrac = 0.50;        // NO starts at 50% like your original
+
+  // Reset to base width before measuring/shrinking
+  yesImg.style.width = "175px";
+  noImg.style.width  = "175px";
+
+  // If images not loaded yet, retry
+  const yesW = yesImg.getBoundingClientRect().width;
+  const noW  = noImg.getBoundingClientRect().width;
+  if (!yesW || !noW) return;
+
+  // Compute max width allowed so YES (at 16px) and NO (at 50%) don't overlap.
+  // YES occupies: [16, 16 + w]
+  // NO occupies:  [0.5*aW, 0.5*aW + w]
+  const maxWFromOverlap = (noLeftFrac * a.width) - pad - gap;
+
+  // Also ensure NO fully fits in arena right side
+  const maxWFromRightEdge = a.width - (noLeftFrac * a.width) - pad;
+
+  // Also ensure YES fully fits left side (it already does, but keep safe)
+  const maxWFromLeft = a.width - 2*pad;
+
+  const maxW = Math.floor(Math.max(110, Math.min(175, maxWFromOverlap, maxWFromRightEdge, maxWFromLeft)));
+
+  yesImg.style.width = maxW + "px";
+  noImg.style.width  = maxW + "px";
 }
 
-noImg.addEventListener("mouseenter", blockNo);
-noImg.addEventListener("pointerdown", (e)=>{ e.preventDefault(); blockNo(); });
+/* "No attempt" ninja + dog goes in front and sits on the NO button */
+function onFirstNoAttempt(){
+  if (noAttemptedOnce || yesClicked) return;
+  noAttemptedOnce = true;
+  ninja.classList.add("show");
+  dog.classList.add("front");
+  chaseDogToNo();
+}
+
+function chaseDogToNo(){
+  if (yesClicked) return;
+  const a = arena.getBoundingClientRect();
+  const b = noImg.getBoundingClientRect();
+  const cx = (b.left - a.left) + b.width/2;
+  const cy = (b.top  - a.top ) + b.height/2;
+  dog.style.left = cx + "px";
+  dog.style.top  = cy + "px";
+  dog.style.transform = "translate(-50%,-50%)";
+}
+
+function handleNoThreat(e){
+  if (yesClicked) return;
+  onFirstNoAttempt();
+  playBark();
+  chaseDogToNo();
+  e.preventDefault?.();
+}
+
+noImg.addEventListener("mouseenter", handleNoThreat);
+noImg.addEventListener("pointerdown", handleNoThreat);
+noImg.addEventListener("touchstart", (e) => {
+  const t = e.touches[0];
+  handleNoThreat({ preventDefault: () => e.preventDefault() });
+}, { passive:false });
 
 function onYes(){
-  if(yesClicked) return;
+  if (yesClicked) return;
   yesClicked = true;
 
   playYes();
 
-  // hide title
+  // hide and remove title
   titleText.classList.add("hide");
   setTimeout(()=>{ titleText.remove(); }, 450);
 
-  // remove choices + dog
+  // remove choice images + dog
   yesImg.remove();
   noImg.remove();
   dog.remove();
 
+  // show celebration + bijan + result
   celebration.classList.add("show");
   bijan.classList.add("show");
   result.classList.add("show");
@@ -334,7 +342,25 @@ function onYes(){
 }
 
 yesImg.addEventListener("click", onYes);
-yesImg.addEventListener("pointerdown", (e)=>{ e.preventDefault(); onYes(); });
+yesImg.addEventListener("pointerdown", (e)=>{ e.preventDefault?.(); onYes(); });
+
+/* run sizing after load and on resize */
+window.addEventListener("load", () => {
+  fitChoiceImages();
+  // re-fit once images are definitely loaded
+  setTimeout(fitChoiceImages, 60);
+  setTimeout(fitChoiceImages, 200);
+});
+
+window.addEventListener("resize", () => {
+  fitChoiceImages();
+  // keep dog aligned over NO if it already started blocking
+  if (noAttemptedOnce && !yesClicked) setTimeout(chaseDogToNo, 30);
+});
+
+// Also refit when each image loads (important on phones)
+yesImg.addEventListener("load", fitChoiceImages);
+noImg.addEventListener("load", fitChoiceImages);
 </script>
 
 </body>
