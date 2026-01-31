@@ -1,1 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine?</title>
+
+  <!-- Fun font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#1f1f1f;
+      --yes:#22c55e;
+      --yes2:#16a34a;
+      --no:#ef4444;
+      --no2:#dc2626;
+      --shadow: 0 18px 60px rgba(0,0,0,.18);
+    }
+
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100svh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 800px at 20% 10%, #fff, transparent 55%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      overflow:hidden;
+    }
+
+    .wrap{
+      width:min(520px, 92vw);
+      padding:22px;
+    }
+
+    .card{
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px 18px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .title{
+      font-family: Pacifico, cursive;
+      font-size: clamp(34px, 6vw, 48px);
+      margin: 6px 0 10px;
+      line-height:1.05;
+    }
+
+    .subtitle{
+      margin: 0 0 16px;
+      opacity:.8;
+      font-size: 14px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top: 14px;
+      position:relative;
+      padding-bottom: 6px;
+    }
+
+    button{
+      -webkit-tap-highlight-color: transparent;
+      border:0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight:800;
+      font-size: 18px;
+      width: min(180px, 38vw);
+      cursor:pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      position:relative;
+      z-index:2;
+    }
+    button:active{ transform: scale(.98); }
+
+    #yesBtn{
+      background: linear-gradient(180deg, var(--yes), var(--yes2));
+      color:white;
+    }
+    #noBtn{
+      background: linear-gradient(180deg, var(--no), var(--no2));
+      color:white;
+    }
+
+    /* Result area */
+    .result{
+      margin-top: 18px;
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      gap: 12px;
+    }
+    .result.show{ display:flex; }
+
+    .photo{
+      width: min(320px, 72vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 22px;
+      overflow:hidden;
+      box-shadow: 0 18px 45px rgba(0,0,0,.18);
+      border: 6px solid rgba(255,255,255,.65);
+      transform: translateY(6px);
+      animation: pop .35s ease forwards;
+      background:#fff;
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    @keyframes pop{
+      from { transform: translateY(18px) scale(.95); opacity:0; }
+      to   { transform: translateY(0) scale(1); opacity:1; }
+    }
+
+    .msg{
+      font-weight:800;
+      font-size: 18px;
+    }
+    .msg small{
+      display:block;
+      font-weight:600;
+      opacity:.8;
+      margin-top:6px;
+    }
+
+    /* Floating flower emojis */
+    .flowers{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      display:none;
+      z-index: 999;
+    }
+    .flowers.show{ display:block; }
+
+    .flower{
+      position:absolute;
+      bottom:-40px;
+      font-size: 28px;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+    }
+    @keyframes floatUp{
+      to{
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Dog blocker that covers the NO button */
+    .dogBlocker{
+      position:absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,.22);
+      border: 4px solid rgba(255,255,255,.7);
+      display:none;
+      z-index: 5;
+      transform: translate(-50%, -50%) scale(.8);
+      animation: dogIn .25s ease forwards;
+      background:#fff;
+    }
+    .dogBlocker img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    @keyframes dogIn{
+      to { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* Cute hearts drifting in background */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.45;
+    }
+    .heart{
+      position:absolute;
+      font-size: 18px;
+      animation: drift 10s linear infinite;
+      filter: blur(.15px);
+    }
+    @keyframes drift{
+      from{ transform: translateY(110vh) translateX(0) rotate(0deg); opacity:0; }
+      10%{ opacity:1; }
+      to  { transform: translateY(-20vh) translateX(30px) rotate(180deg); opacity:0; }
+    }
+
+    /* Small footer note */
+    .hint{
+      margin-top: 10px;
+      font-size: 12px;
+      opacity:.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hearts" id="hearts"></div>
+  <div class="flowers" id="flowers"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="title">Will you be my valentine?</div>
+      <p class="subtitle">Choose wisely 😌💘</p>
+
+      <div class="btnRow" id="btnRow">
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
+
+        <!-- Dog blocker sits ABOVE the No button -->
+        <div class="dogBlocker" id="dogBlocker" aria-hidden="true">
+          <img src="dog.png" alt="A very persuasive dog" />
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="photo">
+          <img src="me.jpg" alt="Me being your valentine" />
+        </div>
+        <div class="msg">
+          YAYYYYY!! 🎉💖
+          <small>Okay now it’s official 😄</small>
+        </div>
+      </div>
+
+      <div class="hint">Tip: this page is made to open nicely on a phone.</div>
+    </div>
+  </div>
+
+  <!-- Confetti / fireworks -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    // --- Background hearts ---
+    const heartsEl = document.getElementById('hearts');
+    const heartEmojis = ["💗","💖","💘","💕","💞","💓"];
+    for (let i=0; i<18; i++){
+      const s = document.createElement('div');
+      s.className = 'heart';
+      s.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+      s.style.left = Math.random()*100 + 'vw';
+      s.style.animationDuration = (8 + Math.random()*8) + 's';
+      s.style.animationDelay = (-Math.random()*10) + 's';
+      s.style.fontSize = (14 + Math.random()*20) + 'px';
+      heartsEl.appendChild(s);
+    }
+
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const result = document.getElementById('result');
+    const flowers = document.getElementById('flowers');
+    const dogBlocker = document.getElementById('dogBlocker');
+    const btnRow = document.getElementById('btnRow');
+
+    let noBlocked = false;
+    let yesClicked = false;
+
+    function centerDogOnNo(){
+      const r = noBtn.getBoundingClientRect();
+      const row = btnRow.getBoundingClientRect();
+      // position relative to btnRow
+      const x = (r.left + r.width/2) - row.left;
+      const y = (r.top + r.height/2) - row.top;
+      dogBlocker.style.left = x + 'px';
+      dogBlocker.style.top  = y + 'px';
+    }
+
+    function blockNo(){
+      if (noBlocked || yesClicked) return;
+      noBlocked = true;
+      centerDogOnNo();
+      dogBlocker.style.display = 'block';
+
+      // Make the NO button "try" to escape a bit
+      noBtn.style.transform = `translateX(${(Math.random()>.5?1:-1)*10}px) translateY(-2px)`;
+      setTimeout(() => { noBtn.style.transform = ""; }, 200);
+    }
+
+    // If she tries to click NO, dog blocks it
+    noBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      blockNo();
+    });
+
+    // If she hovers/aims toward NO, dog preemptively blocks
+    noBtn.addEventListener('pointerenter', blockNo);
+    noBtn.addEventListener('touchstart', blockNo, { passive:false });
+
+    window.addEventListener('resize', () => {
+      if (dogBlocker.style.display === 'block') centerDogOnNo();
+    });
+
+    function burstFireworks(){
+      // A few bursts to feel like fireworks
+      const duration = 1400;
+      const end = Date.now() + duration;
+
+      (function frame(){
+        confetti({
+          particleCount: 16,
+          startVelocity: 36,
+          spread: 70,
+          ticks: 120,
+          origin: { x: Math.random(), y: Math.random()*0.3 + 0.1 }
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+
+    function spawnFlowers(){
+      flowers.classList.add('show');
+      const flowerEmojis = ["🌹","🌸","🌺","💐","🌷","✨"];
+      const start = Date.now();
+      const runMs = 1800;
+
+      const timer = setInterval(() => {
+        const f = document.createElement('div');
+        f.className = 'flower';
+        f.textContent = flowerEmojis[Math.floor(Math.random()*flowerEmojis.length)];
+        f.style.left = Math.random()*100 + 'vw';
+        f.style.animationDuration = (2.4 + Math.random()*1.6) + 's';
+        f.style.fontSize = (22 + Math.random()*22) + 'px';
+        flowers.appendChild(f);
+
+        // cleanup
+        setTimeout(() => f.remove(), 4200);
+
+        if (Date.now() - start > runMs){
+          clearInterval(timer);
+          setTimeout(() => flowers.classList.remove('show'), 2200);
+        }
+      }, 80);
+    }
+
+    yesBtn.addEventListener('click', () => {
+      if (yesClicked) return;
+      yesClicked = true;
+
+      // hide dog if it appeared
+      dogBlocker.style.display = 'none';
+
+      result.classList.add('show');
+      burstFireworks();
+      spawnFlowers();
+
+      // One big center burst
+      confetti({
+        particleCount: 180,
+        spread: 85,
+        startVelocity: 45,
+        scalar: 1.1,
+        origin: { x: 0.5, y: 0.55 }
+      });
+    });
+  </script>
+</body>
+</html>
 
