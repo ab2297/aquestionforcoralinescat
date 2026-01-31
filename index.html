@@ -28,21 +28,23 @@ body{
     linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),
     url("background.jpg") center/cover no-repeat fixed;
   padding: 14px;
-  overflow:hidden; /* ✅ prevents anything from sticking out of viewport */
+  overflow:hidden; /* keeps any absolute elements from sticking out */
 }
 
-/* continuous falling petals/hearts */
+/* falling emojis (ONLY after YES; JS will toggle .on) */
 .flowers{
   position:fixed;
   inset:0;
   pointer-events:none;
-  display:block;          /* ✅ always on */
+  display:none;
   z-index:999;
-  overflow:hidden;        /* ✅ keep within viewport */
+  overflow:hidden;
 }
+.flowers.on{ display:block; }
+
 .flower{
   position:absolute;
-  top:-50px;              /* drop from top */
+  top:-50px;
   font-size:28px;
   animation: fallDown linear forwards;
   user-select:none;
@@ -55,7 +57,7 @@ body{
 .wrap{
   width:min(620px,94vw);
   padding:22px;
-  max-height: 96svh;      /* ✅ prevent overflow on small phones */
+  max-height: 96svh;
   overflow:hidden;
 }
 
@@ -67,7 +69,7 @@ body{
   backdrop-filter:blur(10px);
   text-align:center;
   position: relative;
-  overflow:hidden;        /* ✅ nothing sticks out of the card */
+  overflow:hidden; /* nothing sticks out of the card */
 }
 
 /* title */
@@ -92,15 +94,15 @@ body{
   border-radius:22px;
   background:rgba(255,255,255,.28);
   border: 1px solid rgba(255,255,255,.45);
-  overflow:hidden;        /* ✅ keep moving NO inside */
+  overflow:hidden;
 }
 
-/* YES & NO */
+/* YES & NO — 40% size + closer together */
 .yesImgBtn,.noImgBtn{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:70px;             /* ~40% of old 175px */
+  width:70px;
   height:auto;
   cursor:pointer;
   user-select:none;
@@ -117,9 +119,11 @@ body{
 .yesImgBtn:active,.noImgBtn:active{ transform:translateY(-50%) scale(.95); }
 
 .yesImgBtn{ left:16px; }
+
+/* ✅ closer: instead of hugging the far right, start nearer the center */
 .noImgBtn{
-  left: calc(100% - 16px);
-  transform: translate(-100%, -50%);
+  left: 58%;                 /* was far right; now closer to YES */
+  transform:translateY(-50%);
   z-index: 4;
 }
 
@@ -166,7 +170,7 @@ body{
   inset: 0;
   display:none;
   z-index: 20;
-  overflow:hidden;        /* ✅ clamp everything inside card */
+  overflow:hidden;
 }
 .afterYesLayer.show{ display:block; }
 
@@ -218,13 +222,14 @@ body{
   filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
 }
 
-/* Mobile sizing */
 @media (max-width: 520px){
   .wrap{ padding: 12px; }
   .card{ padding: 18px; min-height: 78vh; }
   .arena{ height: 160px; margin-bottom: 10px; }
   .yesImgBtn,.noImgBtn{ width:64px; }
   .dogChaser{ width:86px; }
+  /* keep them closer on small screens too */
+  .noImgBtn{ left: 56%; }
 }
 @media (max-height: 700px){
   .card{ min-height: 80vh; }
@@ -234,7 +239,7 @@ body{
 
 <body>
 
-<!-- ✅ Always running -->
+<!-- emojis start hidden; turned on after YES -->
 <div class="flowers" id="flowers"></div>
 
 <div class="wrap">
@@ -285,25 +290,6 @@ let yesClicked = false;
 let noAttemptedOnce = false;
 let lastBarkMs = 0;
 
-/* ✅ 1) Continuous petals/hearts until page closes */
-(function startInfinitePetals(){
-  const em = ["🌹","🌸","🌺","💐","🌷","✨","💖","💕","💘"];
-  const maxOnScreen = 55; // keep it smooth
-  setInterval(() => {
-    // avoid piling too many nodes
-    if (flowers.childElementCount > maxOnScreen) return;
-
-    const f = document.createElement("div");
-    f.className = "flower";
-    f.textContent = em[Math.floor(Math.random()*em.length)];
-    f.style.left = Math.random()*100 + "vw";
-    f.style.animationDuration = (3.2 + Math.random()*3.2) + "s";
-    f.style.fontSize = (18 + Math.random()*22) + "px";
-    flowers.appendChild(f);
-    setTimeout(()=>f.remove(), 7000);
-  }, 120);
-})();
-
 function playBark(){
   const now = Date.now();
   if (now - lastBarkMs < 420) return;
@@ -313,6 +299,29 @@ function playBark(){
 }
 function playYes(){
   try{ yesSound.currentTime=0; yesSound.play().catch(()=>{}); }catch(e){}
+}
+
+/* ✅ start infinite petals ONLY after YES */
+let petalsTimer = null;
+function startInfinitePetals(){
+  if (petalsTimer) return;
+  flowers.classList.add("on");
+
+  const em = ["🌹","🌸","🌺","💐","🌷","✨","💖","💕","💘"];
+  const maxOnScreen = 60;
+
+  petalsTimer = setInterval(() => {
+    if (flowers.childElementCount > maxOnScreen) return;
+
+    const f = document.createElement("div");
+    f.className = "flower";
+    f.textContent = em[Math.floor(Math.random()*em.length)];
+    f.style.left = Math.random()*100 + "vw";
+    f.style.animationDuration = (3.2 + Math.random()*3.2) + "s";
+    f.style.fontSize = (18 + Math.random()*22) + "px";
+    flowers.appendChild(f);
+    setTimeout(()=>f.remove(), 7200);
+  }, 120);
 }
 
 function fireworks(){
@@ -400,7 +409,6 @@ function moveNoAway(fromX, fromY){
       (ry + btnH) > (yesLocal.y - 12);
 
     const score = dPointer + 0.55*dYes - (overlapsYes ? 9999 : 0);
-
     if (!best || score > best.score) best = { x: rx, y: ry, score };
   }
 
@@ -447,6 +455,9 @@ function onYes(){
   yesClicked = true;
 
   playYes();
+
+  // start petals now (and keep going)
+  startInfinitePetals();
 
   titleText.classList.add("hide");
   setTimeout(()=>{ titleText.remove(); }, 450);
