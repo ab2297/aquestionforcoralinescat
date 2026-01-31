@@ -1,619 +1,242 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Valentine?</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Valentine?</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --card: rgba(255,255,255,.72);
-      --border: rgba(255,255,255,.55);
-      --text: #151515;
-      --no1:#ff4d4d;
-      --no2:#cc2f2f;
-      --shadow: 0 18px 60px rgba(0,0,0,.28);
-    }
+<style>
+:root{
+  --card: rgba(255,255,255,.72);
+  --border: rgba(255,255,255,.55);
+  --shadow: 0 18px 60px rgba(0,0,0,.28);
+}
 
-    *{ box-sizing:border-box; }
+*{ box-sizing:border-box; }
 
-    body{
-      margin:0;
-      min-height:100svh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      font-family: "Playfair Display", Georgia, serif;
-      color: var(--text);
-      background:
-        linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.30)),
-        url("background.jpg") center / cover no-repeat fixed;
-    }
+body{
+  margin:0;
+  min-height:100svh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),
+    url("background.jpg") center/cover no-repeat fixed;
+  font-family:"Playfair Display",serif;
+}
 
-    .flowers{
-      pointer-events:none;
-      position:fixed;
-      inset:0;
-      overflow:hidden;
-      display:none;
-      z-index:999;
-    }
-    .flowers.show{ display:block; }
-    .flower{
-      position:absolute;
-      bottom:-40px;
-      font-size: 28px;
-      animation: floatUp linear forwards;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.22));
-      user-select:none;
-    }
-    @keyframes floatUp{
-      to{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }
-    }
+.flowers{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  display:none;
+  z-index:999;
+}
+.flowers.show{display:block;}
+.flower{
+  position:absolute;
+  bottom:-40px;
+  font-size:28px;
+  animation:floatUp linear forwards;
+}
+@keyframes floatUp{
+  to{transform:translateY(-110vh) rotate(360deg);opacity:0;}
+}
 
-    .wrap{
-      width:min(620px, 94vw);
-      padding: 22px;
-      position:relative;
-      z-index:1;
-    }
+.wrap{width:min(620px,94vw);padding:22px;}
+.card{
+  background:rgba(255,255,255,.72);
+  border-radius:26px;
+  padding:26px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+  text-align:center;
+}
 
-    .card{
-      position:relative;
-      text-align:center;
-      border-radius: 26px;
-      padding: 26px 18px 18px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      overflow:hidden;
-    }
+.title{
+  font-size:clamp(34px,6vw,52px);
+  font-weight:900;
+}
 
-    /* Ninja sticker */
-    .ninja{
-      position:absolute;
-      right: 10px;
-      top: 10px;
-      width: 50px;
-      height:auto;
-      z-index: 6;
-      pointer-events:none;
-      display:none;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-    }
-    .ninja.show{ display:block; }
-    .ninja.hidden{ display:none; }
-    .ninja img{
-      width:100%;
-      height:auto;
-      display:block;
-      background: transparent;
-      filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));
-    }
+.arena{
+  position:relative;
+  margin:20px auto;
+  width:min(560px,92vw);
+  height:170px;
+  border-radius:22px;
+  background:rgba(255,255,255,.28);
+}
 
-    /* Bijan sticker */
-    .bijan{
-      position:absolute;
-      right: 10px;
-      top: 10px;
-      width: 78px;
-      height:auto;
-      z-index: 8;
-      pointer-events:none;
-      display:none;
-      background: transparent;
-      border:none;
-      box-shadow:none;
-    }
-    .bijan.show{ display:block; }
-    .bijan img{
-      width:100%;
-      height:auto;
-      display:block;
-      background: transparent;
-      filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));
-    }
+/* YES & NO IMAGE BUTTONS */
+.yesImgBtn,.noImgBtn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:175px;
+  max-width:40vw;
+  cursor:pointer;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.28));
+  transition:transform .12s ease;
+}
+.yesImgBtn:hover,.noImgBtn:hover{transform:translateY(-50%) scale(1.04);}
+.yesImgBtn:active,.noImgBtn:active{transform:translateY(-50%) scale(.95);}
 
-    .title{
-      font-weight: 900;
-      font-size: clamp(34px, 6vw, 52px);
-      margin: 10px 0 16px;
-      letter-spacing: .4px;
-    }
+.yesImgBtn{left:16px;}
+.noImgBtn{left:50%;}
 
-    .arena{
-      position:relative;
-      margin: 0 auto;
-      width: min(560px, 92vw);
-      height: 160px;
-      border-radius: 22px;
-      background: rgba(255,255,255,.28);
-      border: 1px solid rgba(255,255,255,.45);
-      overflow:hidden;
-    }
+@media(max-width:420px){
+  .yesImgBtn,.noImgBtn{width:150px;}
+}
 
-    /* NO button polish */
-    .btn{
-      -webkit-tap-highlight-color: transparent;
-      border:0;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-weight: 900;
-      font-size: 18px;
-      width: 175px;
-      max-width: 40vw;
-      cursor:pointer;
-      box-shadow: 0 12px 28px rgba(0,0,0,.18);
-      position:absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 4;
-      touch-action: manipulation;
+/* Dog */
+.dogChaser{
+  position:absolute;
+  width:96px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.dogChaser.front{z-index:7;}
+.dogChaser img{width:100%;}
 
-      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      letter-spacing: .2px;
-    }
-    .btn:hover{
-      filter: brightness(1.03);
-      box-shadow: 0 16px 34px rgba(0,0,0,.22);
-    }
-    .btn:active{ transform: translateY(-50%) scale(.97); }
+/* Celebration GIF */
+.celebration{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:calc(100% - 32px);
+  max-width:520px;
+  display:none;
+}
+.celebration.show{display:block;}
 
-    #noBtn{
-      left: 50%;
-      color:#fff;
-      background: linear-gradient(180deg, var(--no1), var(--no2));
-      z-index: 4;
-    }
+.ninja,.bijan{
+  position:absolute;
+  right:10px;
+  top:10px;
+  display:none;
+}
+.ninja.show,.bijan.show{display:block;}
+.ninja img{width:50px;}
+.bijan img{width:78px;}
 
-    /* YES is now a clickable image (same width as old button) */
-    .yesImgBtn{
-      position:absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 5;
-
-      width: 175px;           /* ✅ same as old button width */
-      max-width: 40vw;
-      height: auto;
-
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-
-      filter: drop-shadow(0 14px 18px rgba(0,0,0,.28));
-      transition: transform .12s ease, filter .12s ease;
-    }
-    .yesImgBtn:hover{ filter: brightness(1.05) drop-shadow(0 16px 22px rgba(0,0,0,.28)); }
-    .yesImgBtn:active{ transform: translateY(-50%) scale(.97); }
-
-    /* Celebration GIF banner (hidden until YES) */
-    .celebration{
-      position:absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: calc(100% - 32px);
-      max-width: 520px;
-      height:auto;
-      z-index: 6;
-      display:none;
-      pointer-events:none;
-      filter: drop-shadow(0 14px 18px rgba(0,0,0,.25));
-    }
-    .celebration.show{ display:block; }
-
-    /* Dog sticker */
-    .dogChaser{
-      position:absolute;
-      width: 96px;
-      height:auto;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index:2;
-      transition: left .18s ease, top .18s ease, transform .12s ease;
-      pointer-events:none;
-      opacity: 1;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      overflow: visible;
-    }
-    .dogChaser.front{ z-index: 7; }
-    .dogChaser img{
-      width:100%;
-      height:auto;
-      display:block;
-      background: transparent;
-      filter: drop-shadow(0 14px 18px rgba(0,0,0,.35));
-    }
-
-    .result{
-      margin-top: 16px;
-      display:none;
-      flex-direction:column;
-      align-items:center;
-      gap: 10px;
-    }
-    .result.show{ display:flex; }
-
-    .loveText{
-      font-weight: 900;
-      font-size: clamp(18px, 3.8vw, 22px);
-    }
-
-    .photo{
-      width: min(360px, 82vw);
-      height:auto;
-      border-radius: 0;
-      overflow: visible;
-      border: none;
-      box-shadow: none;
-      background: transparent;
-      animation: pop .35s ease forwards;
-    }
-    .photo img{
-      width:100%;
-      height:auto;
-      display:block;
-      background: transparent;
-      filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
-    }
-    @keyframes pop{
-      from { transform: translateY(14px) scale(.96); opacity:0; }
-      to   { transform: translateY(0) scale(1); opacity:1; }
-    }
-
-    .shake{ animation: shake .22s ease; }
-    @keyframes shake{
-      0%{ transform: translate(-50%,-50%) rotate(0deg); }
-      25%{ transform: translate(-50%,-50%) rotate(2deg); }
-      50%{ transform: translate(-50%,-50%) rotate(-2deg); }
-      100%{ transform: translate(-50%,-50%) rotate(0deg); }
-    }
-
-    @media (max-width: 420px){
-      .arena{ height: 175px; }
-      .btn{ width: 150px; font-size: 17px; }
-      .yesImgBtn{ width: 150px; }
-      .ninja{ width: 44px; }
-      .bijan{ width: 68px; }
-      .dogChaser{ width: 86px; }
-    }
-  </style>
+.result{display:none;}
+.result.show{display:block;}
+.photo img{width:100%;}
+</style>
 </head>
 
 <body>
-  <div class="flowers" id="flowers"></div>
 
-  <div class="wrap">
-    <div class="card">
-      <div class="ninja hidden" id="ninja">
-        <img src="ninja.png" alt="ninja" />
-      </div>
+<div class="flowers" id="flowers"></div>
 
-      <div class="bijan" id="bijan">
-        <img src="bijan.png" alt="Bijan" />
-      </div>
+<div class="wrap">
+<div class="card">
 
-      <div class="title">Will you be my valentine?</div>
+<div class="ninja" id="ninja"><img src="ninja.png"></div>
+<div class="bijan" id="bijan"><img src="bijan.png"></div>
 
-      <div class="arena" id="arena">
-        <!-- YES is now a clickable image (no button element) -->
-        <img id="yesImg" class="yesImgBtn" src="yes.png" alt="Yes" />
+<div class="title">Will you be my valentine?</div>
 
-        <div class="dogChaser" id="dogChaser" aria-hidden="true">
-          <img src="caspy.png" alt="dog" />
-        </div>
+<div class="arena" id="arena">
 
-        <button class="btn" id="noBtn">No</button>
+<!-- YES -->
+<img id="yesImg" class="yesImgBtn" src="yes.png" alt="yes">
 
-        <!-- Appears after YES -->
-        <img class="celebration" id="celebration" src="celebration.gif" alt="celebration" />
-      </div>
+<!-- Dog -->
+<div class="dogChaser" id="dogChaser">
+  <img src="caspy.png">
+</div>
 
-      <div class="result" id="result">
-        <div class="loveText">Yayyyyy!!! love you my g &lt;3</div>
-        <div class="photo">
-          <img src="me.jpg" alt="me" />
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- NO -->
+<img id="noImg" class="noImgBtn" src="no.png" alt="no">
 
-  <audio id="barkSound" src="bark.wav" preload="auto"></audio>
-  <audio id="yesSound" src="yes.wav" preload="auto"></audio>
+<!-- Celebration -->
+<img id="celebration" class="celebration" src="celebration.gif">
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</div>
 
-  <script>
-    const yesImg = document.getElementById("yesImg");
-    const noBtn = document.getElementById("noBtn");
-    const arena = document.getElementById("arena");
-    const dogChaser = document.getElementById("dogChaser");
-    const result = document.getElementById("result");
-    const flowers = document.getElementById("flowers");
-    const barkSound = document.getElementById("barkSound");
-    const yesSound = document.getElementById("yesSound");
-    const ninja = document.getElementById("ninja");
-    const bijan = document.getElementById("bijan");
-    const celebration = document.getElementById("celebration");
+<div class="result" id="result">
+  <div>Yayyyyy!!! love you my g ❤️</div>
+  <div class="photo"><img src="me.jpg"></div>
+</div>
 
-    let yesClicked = false;
-    let lastBarkMs = 0;
-    let lastYesMs = 0;
-    let noAttemptedOnce = false;
+</div>
+</div>
 
-    function playBark(){
-      const now = Date.now();
-      if (now - lastBarkMs < 450) return;
-      lastBarkMs = now;
-      try{
-        barkSound.currentTime = 0;
-        barkSound.play().catch(()=>{});
-      }catch(e){}
-      if (navigator.vibrate) navigator.vibrate(60);
-    }
+<audio id="barkSound" src="bark.wav"></audio>
+<audio id="yesSound" src="yes.wav"></audio>
 
-    function playYes(){
-      const now = Date.now();
-      if (now - lastYesMs < 600) return;
-      lastYesMs = now;
-      try{
-        yesSound.currentTime = 0;
-        yesSound.play().catch(()=>{});
-      }catch(e){}
-    }
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-    function placeNoInitial(){
-      const a = arena.getBoundingClientRect();
-      const btnW = noBtn.offsetWidth || 170;
-      const btnH = noBtn.offsetHeight || 54;
-      const x = a.width - btnW - 16;
-      const y = (a.height - btnH)/2;
-      noBtn.style.left = x + "px";
-      noBtn.style.top  = (y + btnH/2) + "px";
-      noBtn.style.transform = "translateY(-50%)";
-    }
+<script>
+const yesImg=document.getElementById("yesImg");
+const noImg=document.getElementById("noImg");
+const dog=document.getElementById("dogChaser");
+const arena=document.getElementById("arena");
+const celebration=document.getElementById("celebration");
+const result=document.getElementById("result");
+const ninja=document.getElementById("ninja");
+const bijan=document.getElementById("bijan");
+const flowers=document.getElementById("flowers");
+const barkSound=document.getElementById("barkSound");
+const yesSound=document.getElementById("yesSound");
 
-    function placeDogCenter(){
-      const a = arena.getBoundingClientRect();
-      dogChaser.style.left = (a.width/2) + "px";
-      dogChaser.style.top  = (a.height/2) + "px";
-    }
+let yesClicked=false;
 
-    function toArenaXY(clientX, clientY){
-      const a = arena.getBoundingClientRect();
-      return { x: clientX - a.left, y: clientY - a.top, w: a.width, h: a.height };
-    }
+function playBark(){barkSound.currentTime=0;barkSound.play();}
+function playYes(){yesSound.currentTime=0;yesSound.play();}
 
-    function chaseDogTo(x, y){
-      const a = arena.getBoundingClientRect();
-      const pad = 10;
-      const cx = Math.max(pad, Math.min(a.width - pad, x));
-      const cy = Math.max(pad, Math.min(a.height - pad, y));
-      dogChaser.style.left = cx + "px";
-      dogChaser.style.top  = cy + "px";
-      dogChaser.classList.remove("shake");
-      void dogChaser.offsetWidth;
-      dogChaser.classList.add("shake");
-    }
+function spawnLoveRain(){
+flowers.classList.add("show");
+const em=["💖","🌹","💕","✨"];
+const t=setInterval(()=>{
+const d=document.createElement("div");
+d.className="flower";
+d.textContent=em[Math.floor(Math.random()*em.length)];
+d.style.left=Math.random()*100+"vw";
+flowers.appendChild(d);
+setTimeout(()=>d.remove(),4000);
+},80);
+setTimeout(()=>{clearInterval(t);flowers.classList.remove("show");},2000);
+}
 
-    function onFirstNoAttempt(){
-      if (noAttemptedOnce) return;
-      noAttemptedOnce = true;
+function fireworks(){confetti({particleCount:180,spread:80});}
 
-      ninja.classList.remove("hidden");
-      ninja.classList.add("show");
+function chaseDog(){
+dog.classList.add("front");
+dog.style.left=noImg.offsetLeft+noImg.width/2+"px";
+}
 
-      dogChaser.classList.add("front");
+noImg.addEventListener("mouseenter",()=>{playBark();chaseDog();});
 
-      const a = arena.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
-      const noCenterX = (b.left - a.left) + b.width / 2;
-      const noCenterY = (b.top  - a.top)  + b.height / 2;
-      chaseDogTo(noCenterX, noCenterY);
-    }
+function onYes(){
+if(yesClicked)return;
+yesClicked=true;
 
-    function moveNoAway(fromX, fromY){
-      if (yesClicked) return;
+playYes();
 
-      onFirstNoAttempt();
-      playBark();
+yesImg.remove();
+noImg.remove();
+dog.remove();
 
-      const a = arena.getBoundingClientRect();
-      const btnW = noBtn.offsetWidth;
-      const btnH = noBtn.offsetHeight;
+celebration.classList.add("show");
+bijan.classList.add("show");
+result.classList.add("show");
 
-      const pad = 12;
-      const minX = pad, maxX = a.width - btnW - pad;
-      const minY = pad, maxY = a.height - btnH - pad;
+spawnLoveRain();
+fireworks();
+}
 
-      // Avoid overlapping YES image
-      const yesRect = yesImg.getBoundingClientRect();
-      const yesLocal = { x: yesRect.left - a.left, y: yesRect.top - a.top, w: yesRect.width, h: yesRect.height };
+yesImg.addEventListener("click",onYes);
+</script>
 
-      let best = null;
-      for (let i=0; i<22; i++){
-        const rx = minX + Math.random() * (maxX - minX);
-        const ry = minY + Math.random() * (maxY - minY);
-        const cx = rx + btnW/2, cy = ry + btnH/2;
-
-        const dPointer = Math.hypot(cx - fromX, cy - fromY);
-        const dYes = Math.hypot(cx - (yesLocal.x + yesLocal.w/2), cy - (yesLocal.y + yesLocal.h/2));
-        const score = dPointer + 0.6*dYes;
-
-        const overlapsYes =
-          rx < (yesLocal.x + yesLocal.w + 10) &&
-          (rx + btnW) > (yesLocal.x - 10) &&
-          ry < (yesLocal.y + yesLocal.h + 10) &&
-          (ry + btnH) > (yesLocal.y - 10);
-
-        if (!overlapsYes && (!best || score > best.score)){
-          best = { x: rx, y: ry, score };
-        }
-      }
-
-      const nx = best ? best.x : (minX + maxX)/2;
-      const ny = best ? best.y : (minY + maxY)/2;
-
-      noBtn.style.transition = "left .14s ease, top .14s ease";
-      noBtn.style.left = nx + "px";
-      noBtn.style.top  = (ny + btnH/2) + "px";
-      noBtn.style.transform = "translateY(-50%)";
-
-      chaseDogTo(nx + btnW/2, ny + btnH/2);
-    }
-
-    function handleThreat(e){
-      if (yesClicked) return;
-      const axy = toArenaXY(e.clientX, e.clientY);
-      moveNoAway(axy.x, axy.y);
-      e.preventDefault?.();
-    }
-
-    noBtn.addEventListener("mouseenter", handleThreat);
-    noBtn.addEventListener("pointerdown", handleThreat);
-    noBtn.addEventListener("touchstart", (e) => {
-      const t = e.touches[0];
-      handleThreat({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
-    }, { passive:false });
-
-    arena.addEventListener("pointermove", (e) => {
-      if (yesClicked) return;
-      const a = arena.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
-
-      const ax = e.clientX - a.left;
-      const ay = e.clientY - a.top;
-      const bx = (b.left - a.left) + b.width/2;
-      const by = (b.top - a.top) + b.height/2;
-
-      if (Math.hypot(ax - bx, ay - by) < 115) moveNoAway(ax, ay);
-    });
-
-    function spawnLoveRain(){
-      flowers.classList.add("show");
-      const emojis = ["💖","💘","💝","💕","💗","💓","🌹","🌸","🌺","💐","🌷","✨"];
-      const start = Date.now();
-      const runMs = 1900;
-
-      const timer = setInterval(() => {
-        const f = document.createElement("div");
-        f.className = "flower";
-        f.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        f.style.left = Math.random()*100 + "vw";
-        f.style.animationDuration = (2.0 + Math.random()*1.8) + "s";
-        f.style.fontSize = (22 + Math.random()*26) + "px";
-        flowers.appendChild(f);
-        setTimeout(() => f.remove(), 4500);
-
-        if (Date.now() - start > runMs){
-          clearInterval(timer);
-          setTimeout(() => flowers.classList.remove("show"), 2400);
-        }
-      }, 75);
-    }
-
-    function heartBurst(){
-      if (typeof confetti !== "function") return;
-      confetti({
-        particleCount: 70,
-        spread: 70,
-        startVelocity: 40,
-        ticks: 160,
-        origin: { x: 0.5, y: 0.55 },
-        shapes: ["heart"]
-      });
-      setTimeout(() => {
-        confetti({
-          particleCount: 50,
-          spread: 85,
-          startVelocity: 32,
-          ticks: 160,
-          origin: { x: 0.5, y: 0.55 },
-          shapes: ["heart"]
-        });
-      }, 140);
-    }
-
-    function fireworks(){
-      const duration = 1200;
-      const end = Date.now() + duration;
-      (function frame(){
-        confetti({
-          particleCount: 18,
-          startVelocity: 36,
-          spread: 70,
-          ticks: 120,
-          origin: { x: Math.random(), y: Math.random()*0.3 + 0.1 }
-        });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      })();
-      confetti({ particleCount: 160, spread: 85, startVelocity: 45, origin:{x:.5,y:.55} });
-    }
-
-    function onYes(){
-      if (yesClicked) return;
-      yesClicked = true;
-
-      playYes();
-
-      ninja.classList.remove("show");
-      ninja.classList.add("hidden");
-
-      dogChaser.remove();
-
-      // remove YES image and NO button
-      yesImg.remove();
-      noBtn.remove();
-
-      // show celebration GIF banner across arena
-      celebration.classList.add("show");
-
-      bijan.classList.add("show");
-      result.classList.add("show");
-
-      spawnLoveRain();
-      heartBurst();
-      fireworks();
-    }
-
-    // clickable YES image
-    yesImg.addEventListener("click", onYes);
-    yesImg.addEventListener("pointerdown", (e) => { e.preventDefault?.(); onYes(); });
-
-    window.addEventListener("load", () => {
-      placeNoInitial();
-      placeDogCenter();
-
-      ninja.classList.remove("show");
-      ninja.classList.add("hidden");
-
-      bijan.classList.remove("show");
-      celebration.classList.remove("show");
-    });
-
-    window.addEventListener("resize", () => {
-      if (!yesClicked){
-        placeNoInitial();
-        placeDogCenter();
-      }
-    });
-  </script>
 </body>
 </html>
