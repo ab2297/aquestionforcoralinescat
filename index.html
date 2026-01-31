@@ -143,6 +143,7 @@
       overflow:hidden;
     }
 
+    /* Base button polish */
     .btn{
       -webkit-tap-highlight-color: transparent;
       border:0;
@@ -153,21 +154,46 @@
       width: 175px;
       max-width: 40vw;
       cursor:pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,.14);
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
       position:absolute;
       top: 50%;
       transform: translateY(-50%);
       z-index: 4;
       touch-action: manipulation;
-    }
-    .btn:active{ transform: translateY(-50%) scale(.98); }
 
+      /* nicer feel */
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      letter-spacing: .2px;
+    }
+    .btn:hover{
+      filter: brightness(1.03);
+      box-shadow: 0 16px 34px rgba(0,0,0,.22);
+    }
+    .btn:active{ transform: translateY(-50%) scale(.97); }
+
+    /* YES becomes an icon button using yes.png */
     #yesBtn{
       left: 16px;
       color:#fff;
       background: linear-gradient(180deg, var(--yes1), var(--yes2));
       z-index: 5;
+      padding: 12px 16px;     /* slightly tighter for icon */
     }
+    #yesBtn img{
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,.18));
+      user-select:none;
+      pointer-events:none;
+    }
+
+    /* NO is also polished, can optionally be swapped to an icon later */
     #noBtn{
       left: 50%;
       color:#fff;
@@ -250,6 +276,7 @@
     @media (max-width: 420px){
       .arena{ height: 175px; }
       .btn{ width: 150px; font-size: 17px; }
+      #yesBtn img{ width: 28px; height: 28px; }
       .ninja{ width: 44px; }
       .bijan{ width: 68px; }
       .dogChaser{ width: 86px; }
@@ -273,7 +300,10 @@
       <div class="title">Will you be my valentine?</div>
 
       <div class="arena" id="arena">
-        <button class="btn" id="yesBtn">Yes</button>
+        <!-- YES is now an icon button -->
+        <button class="btn" id="yesBtn" aria-label="Yes">
+          <img src="yes.png" alt="Yes" />
+        </button>
 
         <div class="dogChaser" id="dogChaser" aria-hidden="true">
           <img src="caspy.png" alt="dog" />
@@ -292,6 +322,8 @@
   </div>
 
   <audio id="barkSound" src="bark.wav" preload="auto"></audio>
+  <audio id="yesSound" src="yes.wav" preload="auto"></audio>
+
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <script>
@@ -302,11 +334,13 @@
     const result = document.getElementById("result");
     const flowers = document.getElementById("flowers");
     const barkSound = document.getElementById("barkSound");
+    const yesSound = document.getElementById("yesSound");
     const ninja = document.getElementById("ninja");
     const bijan = document.getElementById("bijan");
 
     let yesClicked = false;
     let lastBarkMs = 0;
+    let lastYesMs = 0;
 
     // First "No attempt" logic
     let noAttemptedOnce = false;
@@ -320,6 +354,16 @@
         barkSound.play().catch(()=>{});
       }catch(e){}
       if (navigator.vibrate) navigator.vibrate(60);
+    }
+
+    function playYes(){
+      const now = Date.now();
+      if (now - lastYesMs < 600) return; // guard double-clicks
+      lastYesMs = now;
+      try{
+        yesSound.currentTime = 0;
+        yesSound.play().catch(()=>{});
+      }catch(e){}
     }
 
     function placeNoInitial(){
@@ -453,27 +497,50 @@
       if (Math.hypot(ax - bx, ay - by) < 115) moveNoAway(ax, ay);
     });
 
-    function spawnFlowers(){
+    // Hearts + flowers + sparkles (all float up)
+    function spawnLoveRain(){
       flowers.classList.add("show");
-      const flowerEmojis = ["🌹","🌸","🌺","💐","🌷","✨"];
+      const emojis = ["💖","💘","💝","💕","💗","💓","🌹","🌸","🌺","💐","🌷","✨"];
       const start = Date.now();
-      const runMs = 1700;
+      const runMs = 1900;
 
       const timer = setInterval(() => {
         const f = document.createElement("div");
         f.className = "flower";
-        f.textContent = flowerEmojis[Math.floor(Math.random()*flowerEmojis.length)];
+        f.textContent = emojis[Math.floor(Math.random()*emojis.length)];
         f.style.left = Math.random()*100 + "vw";
-        f.style.animationDuration = (2.2 + Math.random()*1.6) + "s";
-        f.style.fontSize = (22 + Math.random()*22) + "px";
+        f.style.animationDuration = (2.0 + Math.random()*1.8) + "s";
+        f.style.fontSize = (22 + Math.random()*26) + "px";
         flowers.appendChild(f);
-        setTimeout(() => f.remove(), 4200);
+        setTimeout(() => f.remove(), 4500);
 
         if (Date.now() - start > runMs){
           clearInterval(timer);
-          setTimeout(() => flowers.classList.remove("show"), 2200);
+          setTimeout(() => flowers.classList.remove("show"), 2400);
         }
-      }, 85);
+      }, 75);
+    }
+
+    function heartBurst(){
+      if (typeof confetti !== "function") return;
+      confetti({
+        particleCount: 70,
+        spread: 70,
+        startVelocity: 40,
+        ticks: 160,
+        origin: { x: 0.5, y: 0.55 },
+        shapes: ["heart"]
+      });
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          spread: 85,
+          startVelocity: 32,
+          ticks: 160,
+          origin: { x: 0.5, y: 0.55 },
+          shapes: ["heart"]
+        });
+      }, 140);
     }
 
     function fireworks(){
@@ -496,19 +563,24 @@
       if (yesClicked) return;
       yesClicked = true;
 
+      // play YES song
+      playYes();
+
       // hide ninja when YES is clicked (even if it appeared)
       ninja.classList.remove("show");
       ninja.classList.add("hidden");
 
-      // remove caspy from near the buttons entirely
-      dogChaser.style.display = "none";
+      // remove caspy entirely so it can’t reappear on resize or via other code
+      dogChaser.remove();
 
       // show Bijan sticker in top-right
       bijan.classList.add("show");
 
       result.classList.add("show");
 
-      spawnFlowers();
+      // love effects
+      spawnLoveRain();
+      heartBurst();
       fireworks();
     });
 
