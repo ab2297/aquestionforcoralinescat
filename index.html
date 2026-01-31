@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Valentine?</title>
 
-<!-- Cute fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
@@ -29,28 +28,36 @@ body{
     linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),
     url("background.jpg") center/cover no-repeat fixed;
   padding: 14px;
+  overflow:hidden; /* ✅ prevents anything from sticking out of viewport */
 }
 
-/* floating emojis */
+/* continuous falling petals/hearts */
 .flowers{
   position:fixed;
   inset:0;
   pointer-events:none;
-  display:none;
+  display:block;          /* ✅ always on */
   z-index:999;
+  overflow:hidden;        /* ✅ keep within viewport */
 }
-.flowers.show{display:block;}
 .flower{
   position:absolute;
-  bottom:-40px;
+  top:-50px;              /* drop from top */
   font-size:28px;
-  animation:floatUp linear forwards;
+  animation: fallDown linear forwards;
+  user-select:none;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.22));
 }
-@keyframes floatUp{
-  to{transform:translateY(-110vh) rotate(360deg);opacity:0;}
+@keyframes fallDown{
+  to{ transform: translateY(120vh) rotate(360deg); opacity: 0; }
 }
 
-.wrap{width:min(620px,94vw);padding:22px;}
+.wrap{
+  width:min(620px,94vw);
+  padding:22px;
+  max-height: 96svh;      /* ✅ prevent overflow on small phones */
+  overflow:hidden;
+}
 
 .card{
   background:rgba(255,255,255,.72);
@@ -60,9 +67,10 @@ body{
   backdrop-filter:blur(10px);
   text-align:center;
   position: relative;
+  overflow:hidden;        /* ✅ nothing sticks out of the card */
 }
 
-/* 💖 Cute question font */
+/* title */
 .title{
   font-family: "Pacifico", cursive;
   font-size: clamp(36px,6vw,56px);
@@ -84,16 +92,15 @@ body{
   border-radius:22px;
   background:rgba(255,255,255,.28);
   border: 1px solid rgba(255,255,255,.45);
-  overflow:hidden;
+  overflow:hidden;        /* ✅ keep moving NO inside */
 }
 
-/* YES & NO image buttons (first page) */
-/* ✅ 40% size vs old 175px -> 70px */
+/* YES & NO */
 .yesImgBtn,.noImgBtn{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:70px;            /* ~40% of 175px */
+  width:70px;             /* ~40% of old 175px */
   height:auto;
   cursor:pointer;
   user-select:none;
@@ -111,13 +118,12 @@ body{
 
 .yesImgBtn{ left:16px; }
 .noImgBtn{
-  /* start on right side, not center, for better spacing when small */
   left: calc(100% - 16px);
   transform: translate(-100%, -50%);
   z-index: 4;
 }
 
-/* Dog (first page) — hidden until first NO press */
+/* Dog hidden until NO */
 .dogChaser{
   position:absolute;
   width:96px;
@@ -127,7 +133,7 @@ body{
   pointer-events:none;
   z-index:7;
   transition: left .18s ease, top .18s ease, transform .12s ease;
-  display:none; /* ✅ hidden until first NO */
+  display:none;
 }
 .dogChaser.show{ display:block; }
 .dogChaser img{ width:100%; height:auto; display:block; }
@@ -140,32 +146,27 @@ body{
   100%{ transform: translate(-50%,-50%) rotate(0deg); }
 }
 
-/* Top stickers */
-.ninja,.bijan{
+/* Ninja */
+.ninja{
   position:absolute;
+  right:10px; top:10px;
+  z-index: 6;
   display:none;
   pointer-events:none;
 }
-.ninja{
-  right:10px; top:10px;
-  z-index: 6;
-}
 .ninja.show{display:block;}
-.ninja img{width:50px;height:auto;display:block; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));}
-
-.result{
-  display:none;
-  font-family:"Fredoka", system-ui, sans-serif;
-  position: relative;
+.ninja img{
+  width:50px;height:auto;display:block;
+  filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));
 }
-.result.show{display:block;}
 
-/* ✅ AFTER-YES LAYOUT */
+/* After-YES layer */
 .afterYesLayer{
   position:absolute;
   inset: 0;
   display:none;
   z-index: 20;
+  overflow:hidden;        /* ✅ clamp everything inside card */
 }
 .afterYesLayer.show{ display:block; }
 
@@ -203,6 +204,7 @@ body{
   font-weight:600;
   font-size: clamp(18px, 4vw, 22px);
   padding: 0 14px;
+  font-family:"Fredoka", system-ui, sans-serif;
 }
 
 .afterYesMe{
@@ -216,6 +218,7 @@ body{
   filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
 }
 
+/* Mobile sizing */
 @media (max-width: 520px){
   .wrap{ padding: 12px; }
   .card{ padding: 18px; min-height: 78vh; }
@@ -223,7 +226,6 @@ body{
   .yesImgBtn,.noImgBtn{ width:64px; }
   .dogChaser{ width:86px; }
 }
-
 @media (max-height: 700px){
   .card{ min-height: 80vh; }
 }
@@ -232,6 +234,7 @@ body{
 
 <body>
 
+<!-- ✅ Always running -->
 <div class="flowers" id="flowers"></div>
 
 <div class="wrap">
@@ -244,7 +247,6 @@ body{
     <div class="arena" id="arena">
       <img id="yesImg" class="yesImgBtn" src="yes.png" alt="yes">
 
-      <!-- dog starts hidden -->
       <div class="dogChaser" id="dogChaser" aria-hidden="true">
         <img src="caspy.png" alt="dog">
       </div>
@@ -253,10 +255,10 @@ body{
     </div>
 
     <div class="afterYesLayer" id="afterYesLayer" aria-hidden="true">
-      <img class="afterYesCelebration" id="afterYesCelebration" src="celebration.gif" alt="celebration">
-      <img class="afterYesBijan" id="afterYesBijan" src="bijan.png" alt="bijan">
-      <div class="afterYesText" id="afterYesText">Yayyyyy!!! love you my g ❤️</div>
-      <img class="afterYesMe" id="afterYesMe" src="me.jpg" alt="me">
+      <img class="afterYesCelebration" src="celebration.gif" alt="celebration">
+      <img class="afterYesBijan" src="bijan.png" alt="bijan">
+      <div class="afterYesText">Yayyyyy!!! love you my g ❤️</div>
+      <img class="afterYesMe" src="me.jpg" alt="me">
     </div>
 
   </div>
@@ -283,6 +285,25 @@ let yesClicked = false;
 let noAttemptedOnce = false;
 let lastBarkMs = 0;
 
+/* ✅ 1) Continuous petals/hearts until page closes */
+(function startInfinitePetals(){
+  const em = ["🌹","🌸","🌺","💐","🌷","✨","💖","💕","💘"];
+  const maxOnScreen = 55; // keep it smooth
+  setInterval(() => {
+    // avoid piling too many nodes
+    if (flowers.childElementCount > maxOnScreen) return;
+
+    const f = document.createElement("div");
+    f.className = "flower";
+    f.textContent = em[Math.floor(Math.random()*em.length)];
+    f.style.left = Math.random()*100 + "vw";
+    f.style.animationDuration = (3.2 + Math.random()*3.2) + "s";
+    f.style.fontSize = (18 + Math.random()*22) + "px";
+    flowers.appendChild(f);
+    setTimeout(()=>f.remove(), 7000);
+  }, 120);
+})();
+
 function playBark(){
   const now = Date.now();
   if (now - lastBarkMs < 420) return;
@@ -292,26 +313,6 @@ function playBark(){
 }
 function playYes(){
   try{ yesSound.currentTime=0; yesSound.play().catch(()=>{}); }catch(e){}
-}
-
-function spawnLoveRain(){
-  flowers.classList.add("show");
-  const em=["💖","🌹","💕","✨","💘","💝"];
-  const t=setInterval(()=>{
-    const d=document.createElement("div");
-    d.className="flower";
-    d.textContent=em[Math.floor(Math.random()*em.length)];
-    d.style.left=Math.random()*100+"vw";
-    d.style.animationDuration=(2.0 + Math.random()*1.8) + "s";
-    d.style.fontSize=(22 + Math.random()*20) + "px";
-    flowers.appendChild(d);
-    setTimeout(()=>d.remove(),4200);
-  },80);
-
-  setTimeout(()=>{
-    clearInterval(t);
-    flowers.classList.remove("show");
-  },2100);
 }
 
 function fireworks(){
@@ -348,8 +349,6 @@ function chaseDogTo(x, y){
   void dog.offsetWidth;
   dog.classList.add("shake");
 }
-
-/* ✅ place dog directly over NO button center */
 function chaseDogToNoCenter(){
   const a = arena.getBoundingClientRect();
   const b = noImg.getBoundingClientRect();
@@ -358,17 +357,16 @@ function chaseDogToNoCenter(){
   chaseDogTo(cx, cy);
 }
 
-/* show dog only after first NO press */
+/* show dog after first NO */
 function onFirstNoAttempt(){
   if (noAttemptedOnce) return;
   noAttemptedOnce = true;
-
   ninja.classList.add("show");
-  dog.classList.add("show"); /* ✅ make caspy appear */
-  chaseDogToNoCenter();      /* ✅ and sit on NO */
+  dog.classList.add("show");
+  chaseDogToNoCenter();
 }
 
-/* ✅ move NO away from where user tries, avoid YES, dog follows */
+/* move NO away, avoid YES, dog follows */
 function moveNoAway(fromX, fromY){
   if (yesClicked) return;
 
@@ -387,7 +385,7 @@ function moveNoAway(fromX, fromY){
   const yesLocal = { x: yesRect.left - a.left, y: yesRect.top - a.top, w: yesRect.width, h: yesRect.height };
 
   let best = null;
-  for (let i=0; i<26; i++){
+  for (let i=0; i<28; i++){
     const rx = minX + Math.random() * (maxX - minX);
     const ry = minY + Math.random() * (maxY - minY);
     const cx = rx + btnW/2, cy = ry + btnH/2;
@@ -395,31 +393,25 @@ function moveNoAway(fromX, fromY){
     const dPointer = Math.hypot(cx - fromX, cy - fromY);
     const dYes = Math.hypot(cx - (yesLocal.x + yesLocal.w/2), cy - (yesLocal.y + yesLocal.h/2));
 
-    // discourage overlap with YES
     const overlapsYes =
       rx < (yesLocal.x + yesLocal.w + 12) &&
       (rx + btnW) > (yesLocal.x - 12) &&
       ry < (yesLocal.y + yesLocal.h + 12) &&
       (ry + btnH) > (yesLocal.y - 12);
 
-    // score: far from pointer + also away from YES a bit
-    const score = dPointer + 0.55 * dYes - (overlapsYes ? 9999 : 0);
+    const score = dPointer + 0.55*dYes - (overlapsYes ? 9999 : 0);
 
-    if (!best || score > best.score){
-      best = { x: rx, y: ry, score };
-    }
+    if (!best || score > best.score) best = { x: rx, y: ry, score };
   }
 
   const nx = best ? best.x : (minX + maxX)/2;
   const ny = best ? best.y : (minY + maxY)/2;
 
-  // set NO position (using translateY(-50%) like earlier)
   noImg.style.transition = "left .14s ease, top .14s ease, transform .14s ease";
   noImg.style.left = nx + "px";
   noImg.style.top  = (ny + btnH/2) + "px";
   noImg.style.transform = "translateY(-50%)";
 
-  // dog follows NO center
   chaseDogTo(nx + btnW/2, ny + btnH/2);
 }
 
@@ -438,20 +430,18 @@ noImg.addEventListener("touchstart", (e) => {
   handleNoThreat({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
 }, { passive:false });
 
-/* also if the pointer gets close to NO, push it */
 arena.addEventListener("pointermove", (e) => {
   if (yesClicked) return;
   const a = arena.getBoundingClientRect();
   const b = noImg.getBoundingClientRect();
-
   const ax = e.clientX - a.left;
   const ay = e.clientY - a.top;
   const bx = (b.left - a.left) + b.width/2;
   const by = (b.top - a.top) + b.height/2;
-
   if (Math.hypot(ax - bx, ay - by) < 105) moveNoAway(ax, ay);
 });
 
+/* YES */
 function onYes(){
   if (yesClicked) return;
   yesClicked = true;
@@ -461,16 +451,12 @@ function onYes(){
   titleText.classList.add("hide");
   setTimeout(()=>{ titleText.remove(); }, 450);
 
-  // remove first-page UI
   yesImg.remove();
   noImg.remove();
   dog.remove();
   ninja.classList.remove("show");
 
-  // show after-YES layout
   afterYesLayer.classList.add("show");
-
-  spawnLoveRain();
   fireworks();
 }
 
