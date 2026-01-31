@@ -5,17 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
 
-  <!-- Vintage + classy -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --card: rgba(255,255,255,.78);
-      --cardBorder: rgba(255,255,255,.55);
+      --card: rgba(255,255,255,.72);
+      --border: rgba(255,255,255,.55);
       --text: #151515;
-      --muted: rgba(0,0,0,.65);
       --yes1:#2ecc71;
       --yes2:#1f9d57;
       --no1:#ff4d4d;
@@ -35,33 +33,11 @@
       font-family: "Playfair Display", Georgia, serif;
       color: var(--text);
 
-      /* Background image + overlay */
       background:
         linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.30)),
-        url("background.jpg?v=1") center / cover no-repeat fixed;
+        url("background.jpeg") center / cover no-repeat fixed;
     }
 
-    /* Floating hearts in background */
-    .hearts{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:0;
-      opacity:.35;
-    }
-    .heart{
-      position:absolute;
-      animation: drift 10s linear infinite;
-      filter: blur(.2px);
-      user-select:none;
-    }
-    @keyframes drift{
-      from{ transform: translateY(110vh) rotate(0deg); opacity:0; }
-      10%{ opacity:1; }
-      to  { transform: translateY(-20vh) rotate(180deg); opacity:0; }
-    }
-
-    /* Flowers overlay on YES */
     .flowers{
       pointer-events:none;
       position:fixed;
@@ -80,10 +56,7 @@
       user-select:none;
     }
     @keyframes floatUp{
-      to{
-        transform: translateY(-110vh) rotate(360deg);
-        opacity: 0;
-      }
+      to{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }
     }
 
     .wrap{
@@ -97,69 +70,48 @@
       position:relative;
       text-align:center;
       border-radius: 26px;
-      padding: 22px 18px 16px;
+      padding: 26px 18px 18px;
       background: var(--card);
-      border: 1px solid var(--cardBorder);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
       overflow:hidden;
     }
 
-    .title{
-      font-weight: 900;
-      font-size: clamp(32px, 6vw, 48px);
-      margin: 10px 0 6px;
-      letter-spacing: .5px;
-    }
-
-    .subtitle{
-      margin: 0 0 14px;
-      font-size: 14px;
-      color: rgba(0,0,0,.70);
-    }
-
-    /* Ninja watcher (smaller corner) */
+    /* Ninja cutout: no background, no border */
     .ninja{
       position:absolute;
-      right: 12px;
-      top: 12px;
-      width: 64px;
-      height: 64px;
-      border-radius: 14px;
-      overflow:hidden;
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      border: 2px solid rgba(255,255,255,.7);
-      background:#fff;
-      transform: rotate(1.5deg);
-      z-index: 3;
+      right: 10px;
+      top: 10px;
+      width: 56px;
+      height: auto;
+      z-index: 5;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
     }
+    .ninja.hidden{ display:none; }
     .ninja img{
       width:100%;
-      height:100%;
-      object-fit:cover;
+      height:auto;
       display:block;
-    }
-    .ninjaTag{
-      position:absolute;
-      right: 12px;
-      top: 82px;
-      font-size: 11px;
-      opacity:.78;
-      font-weight:700;
-      z-index: 3;
-      user-select:none;
-      color: rgba(0,0,0,.75);
+      background: transparent;
     }
 
-    /* The arena where No runs */
+    .title{
+      font-weight: 900;
+      font-size: clamp(34px, 6vw, 52px);
+      margin: 10px 0 16px;
+      letter-spacing: .4px;
+    }
+
     .arena{
       position:relative;
-      margin: 10px auto 0;
+      margin: 0 auto;
       width: min(560px, 92vw);
       height: 160px;
       border-radius: 22px;
-      background: rgba(255,255,255,.35);
-      border: 1px solid rgba(255,255,255,.55);
+      background: rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.45);
       overflow:hidden;
     }
 
@@ -196,8 +148,8 @@
 
     .dogChaser{
       position:absolute;
-      width: 82px;
-      height: 82px;
+      width: 78px;
+      height: 78px;
       border-radius: 18px;
       overflow:hidden;
       box-shadow: 0 16px 40px rgba(0,0,0,.22);
@@ -218,18 +170,22 @@
       display:block;
     }
 
-    /* YES result */
     .result{
       margin-top: 16px;
       display:none;
       flex-direction:column;
       align-items:center;
-      gap: 12px;
+      gap: 10px;
     }
     .result.show{ display:flex; }
 
+    .loveText{
+      font-weight: 900;
+      font-size: clamp(18px, 3.8vw, 22px);
+    }
+
     .photo{
-      width: min(320px, 74vw);
+      width: min(340px, 78vw);
       aspect-ratio: 1 / 1;
       border-radius: 22px;
       overflow:hidden;
@@ -244,48 +200,12 @@
       object-fit:cover;
       display:block;
     }
-
     @keyframes pop{
       from { transform: translateY(14px) scale(.96); opacity:0; }
       to   { transform: translateY(0) scale(1); opacity:1; }
     }
 
-    .msg{
-      font-weight: 900;
-      font-size: 18px;
-    }
-    .msg small{
-      display:block;
-      margin-top:6px;
-      font-weight: 700;
-      color: rgba(0,0,0,.70);
-    }
-
-    .hint{
-      margin-top: 10px;
-      font-size: 12px;
-      color: rgba(0,0,0,.60);
-    }
-
-    /* Debug banner if images not loading */
-    .debug{
-      display:none;
-      margin: 10px auto 0;
-      width: min(560px, 92vw);
-      text-align:left;
-      background: rgba(0,0,0,.75);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 12px;
-      line-height: 1.35;
-    }
-    .debug.show{ display:block; }
-
-    .shake{
-      animation: shake .22s ease;
-    }
+    .shake{ animation: shake .22s ease; }
     @keyframes shake{
       0%{ transform: translate(-50%,-50%) rotate(0deg); }
       25%{ transform: translate(-50%,-50%) rotate(2deg); }
@@ -296,147 +216,62 @@
     @media (max-width: 420px){
       .arena{ height: 175px; }
       .btn{ width: 150px; font-size: 17px; }
-      .ninja{ width: 56px; height: 56px; }
-      .ninjaTag{ top: 74px; }
+      .ninja{ width: 48px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="hearts" id="hearts"></div>
   <div class="flowers" id="flowers"></div>
 
   <div class="wrap">
     <div class="card">
-      <div class="ninja">
-        <img id="ninjaImg" src="ninja.png?v=1" alt="Ninja watching" />
+      <div class="ninja" id="ninja">
+        <img src="ninja.png" alt="ninja" />
       </div>
-      <div class="ninjaTag">watching 👀</div>
 
       <div class="title">Will you be my valentine?</div>
-      <div class="subtitle">Think carefully 😌</div>
 
       <div class="arena" id="arena">
         <button class="btn" id="yesBtn">Yes</button>
 
         <div class="dogChaser" id="dogChaser" aria-hidden="true">
-          <img id="dogImg" src="dog.png?v=1" alt="dog chaser" />
+          <img src="dog.png" alt="dog" />
         </div>
 
         <button class="btn" id="noBtn">No</button>
       </div>
 
       <div class="result" id="result">
+        <div class="loveText">Yayyyyy!!! love you my g &lt;3</div>
         <div class="photo">
-          <img id="meImg" src="me.png?v=1" alt="Me" />
-        </div>
-        <div class="msg">
-          YAYYYYY!! 🎉💖
-          <small>Okay now it’s official 😄</small>
+          <img src="me.png" alt="me" />
         </div>
       </div>
-
-      <div class="hint">If “No” feels impossible… that’s intentional.</div>
-
-      <div class="debug" id="debug"></div>
     </div>
   </div>
 
-  <audio id="barkSound" src="bark.wav?v=1" preload="auto"></audio>
+  <audio id="barkSound" src="bark.wav" preload="auto"></audio>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <script>
-    // ---------- hearts ----------
-    const heartsEl = document.getElementById('hearts');
-    const heartEmojis = ["💗","💖","💘","💕","💞","💓"];
-    for (let i=0; i<18; i++){
-      const s = document.createElement('div');
-      s.className = 'heart';
-      s.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
-      s.style.left = Math.random()*100 + 'vw';
-      s.style.animationDuration = (8 + Math.random()*8) + 's';
-      s.style.animationDelay = (-Math.random()*10) + 's';
-      s.style.fontSize = (14 + Math.random()*20) + 'px';
-      heartsEl.appendChild(s);
-    }
-
-    // ---------- elements ----------
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const arena = document.getElementById('arena');
-    const dogChaser = document.getElementById('dogChaser');
-    const result = document.getElementById('result');
-    const flowers = document.getElementById('flowers');
-    const barkSound = document.getElementById('barkSound');
-
-    const debug = document.getElementById('debug');
-    const bgUrl = "background.jpeg";
-    const requiredFiles = ["background.jpeg", "me.png", "ninja.png", "dog.png", "bark.wav"];
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const arena = document.getElementById("arena");
+    const dogChaser = document.getElementById("dogChaser");
+    const result = document.getElementById("result");
+    const flowers = document.getElementById("flowers");
+    const barkSound = document.getElementById("barkSound");
+    const ninja = document.getElementById("ninja");
 
     let yesClicked = false;
     let lastBarkMs = 0;
 
-    function showDebug(lines){
-      debug.classList.add('show');
-      debug.textContent = lines.join("\n");
-    }
-
-    // ---------- image/file load checks ----------
-    function checkFile(url){
-      // HEAD not always allowed; use GET with cache-bust and small fetch
-      return fetch(url + "?v=" + Date.now(), { method: "GET" })
-        .then(r => ({ ok: r.ok, status: r.status, url }))
-        .catch(() => ({ ok: false, status: "ERR", url }));
-    }
-
-    async function verifyAssets(){
-      // Check the obvious assets
-      const checks = await Promise.all(requiredFiles.map(f => checkFile(f)));
-      const bad = checks.filter(c => !c.ok);
-
-      if (bad.length){
-        showDebug([
-          "⚠️ Some files are not loading from GitHub Pages.",
-          "Make sure these files are in the SAME folder as index.html (repo root) and names match EXACTLY:",
-          "",
-          ...bad.map(b => `Missing/blocked: ${b.url} (status: ${b.status})`),
-          "",
-          "Common causes:",
-          "- Filename case mismatch (GitHub is case-sensitive)",
-          "- Files are inside a subfolder but code expects root",
-          "- You uploaded JPG but code says PNG (or vice versa)",
-          "",
-          "Fix it, commit, then hard refresh (Ctrl+Shift+R)."
-        ]);
-      }
-    }
-
-    // If any <img> fails, show which one
-    function wireImgError(id, label){
-      const el = document.getElementById(id);
-      el.addEventListener("error", () => {
-        showDebug([
-          "⚠️ Image failed to load:",
-          `${label} -> ${el.getAttribute("src")}`,
-          "",
-          "Fix:",
-          "- Ensure the file exists in the repo root",
-          "- Ensure the filename matches exactly",
-          "- If your file is .jpg, update src to .jpg"
-        ]);
-      });
-    }
-    wireImgError("ninjaImg", "ninja");
-    wireImgError("dogImg", "dog");
-    wireImgError("meImg", "me");
-
-    // ---------- audio ----------
     function playBark(){
       const now = Date.now();
       if (now - lastBarkMs < 450) return;
       lastBarkMs = now;
-
       try{
         barkSound.currentTime = 0;
         barkSound.play().catch(()=>{});
@@ -444,7 +279,6 @@
       if (navigator.vibrate) navigator.vibrate(60);
     }
 
-    // ---------- runaway logic ----------
     function placeNoInitial(){
       const a = arena.getBoundingClientRect();
       const btnW = noBtn.offsetWidth || 170;
@@ -452,7 +286,7 @@
       const x = a.width - btnW - 16;
       const y = (a.height - btnH)/2;
       noBtn.style.left = x + "px";
-      noBtn.style.top = (y + btnH/2) + "px";
+      noBtn.style.top  = (y + btnH/2) + "px";
       noBtn.style.transform = "translateY(-50%)";
     }
 
@@ -474,6 +308,9 @@
       const cy = Math.max(pad, Math.min(a.height - pad, y));
       dogChaser.style.left = cx + "px";
       dogChaser.style.top  = cy + "px";
+      dogChaser.classList.remove("shake");
+      void dogChaser.offsetWidth;
+      dogChaser.classList.add("shake");
     }
 
     function moveNoAway(fromX, fromY){
@@ -493,7 +330,7 @@
       const yesLocal = { x: yesRect.left - a.left, y: yesRect.top - a.top, w: yesRect.width, h: yesRect.height };
 
       let best = null;
-      for (let i=0; i<20; i++){
+      for (let i=0; i<22; i++){
         const rx = minX + Math.random() * (maxX - minX);
         const ry = minY + Math.random() * (maxY - minY);
         const cx = rx + btnW/2, cy = ry + btnH/2;
@@ -503,10 +340,10 @@
         const score = dPointer + 0.6*dYes;
 
         const overlapsYes =
-          rx < (yesLocal.x + yesLocal.w + 8) &&
-          (rx + btnW) > (yesLocal.x - 8) &&
-          ry < (yesLocal.y + yesLocal.h + 8) &&
-          (ry + btnH) > (yesLocal.y - 8);
+          rx < (yesLocal.x + yesLocal.w + 10) &&
+          (rx + btnW) > (yesLocal.x - 10) &&
+          ry < (yesLocal.y + yesLocal.h + 10) &&
+          (ry + btnH) > (yesLocal.y - 10);
 
         if (!overlapsYes && (!best || score > best.score)){
           best = { x: rx, y: ry, score };
@@ -516,16 +353,12 @@
       const nx = best ? best.x : (minX + maxX)/2;
       const ny = best ? best.y : (minY + maxY)/2;
 
-      noBtn.style.transition = "left .15s ease, top .15s ease";
+      noBtn.style.transition = "left .14s ease, top .14s ease";
       noBtn.style.left = nx + "px";
       noBtn.style.top  = (ny + btnH/2) + "px";
       noBtn.style.transform = "translateY(-50%)";
 
       chaseDogTo(nx + btnW/2, ny + btnH/2);
-
-      dogChaser.classList.remove("shake");
-      void dogChaser.offsetWidth;
-      dogChaser.classList.add("shake");
     }
 
     function handleThreat(e){
@@ -552,12 +385,34 @@
       const bx = (b.left - a.left) + b.width/2;
       const by = (b.top - a.top) + b.height/2;
 
-      if (Math.hypot(ax - bx, ay - by) < 105) moveNoAway(ax, ay);
+      if (Math.hypot(ax - bx, ay - by) < 115) moveNoAway(ax, ay);
     });
 
-    // ---------- YES celebration ----------
-    function burstFireworks(){
-      const duration = 1400;
+    function spawnFlowers(){
+      flowers.classList.add("show");
+      const flowerEmojis = ["🌹","🌸","🌺","💐","🌷","✨"];
+      const start = Date.now();
+      const runMs = 1700;
+
+      const timer = setInterval(() => {
+        const f = document.createElement("div");
+        f.className = "flower";
+        f.textContent = flowerEmojis[Math.floor(Math.random()*flowerEmojis.length)];
+        f.style.left = Math.random()*100 + "vw";
+        f.style.animationDuration = (2.2 + Math.random()*1.6) + "s";
+        f.style.fontSize = (22 + Math.random()*22) + "px";
+        flowers.appendChild(f);
+        setTimeout(() => f.remove(), 4200);
+
+        if (Date.now() - start > runMs){
+          clearInterval(timer);
+          setTimeout(() => flowers.classList.remove("show"), 2200);
+        }
+      }, 85);
+    }
+
+    function fireworks(){
+      const duration = 1200;
       const end = Date.now() + duration;
       (function frame(){
         confetti({
@@ -569,38 +424,20 @@
         });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
-    }
-
-    function spawnFlowers(){
-      flowers.classList.add("show");
-      const flowerEmojis = ["🌹","🌸","🌺","💐","🌷","✨"];
-      const start = Date.now();
-      const runMs = 1800;
-
-      const timer = setInterval(() => {
-        const f = document.createElement("div");
-        f.className = "flower";
-        f.textContent = flowerEmojis[Math.floor(Math.random()*flowerEmojis.length)];
-        f.style.left = Math.random()*100 + "vw";
-        f.style.animationDuration = (2.4 + Math.random()*1.6) + "s";
-        f.style.fontSize = (22 + Math.random()*22) + "px";
-        flowers.appendChild(f);
-        setTimeout(() => f.remove(), 4200);
-
-        if (Date.now() - start > runMs){
-          clearInterval(timer);
-          setTimeout(() => flowers.classList.remove("show"), 2200);
-        }
-      }, 80);
+      confetti({ particleCount: 160, spread: 85, startVelocity: 45, origin:{x:.5,y:.55} });
     }
 
     yesBtn.addEventListener("click", () => {
       if (yesClicked) return;
       yesClicked = true;
 
+      // ninja disappears
+      ninja.classList.add("hidden");
+
+      // show photo + message
       result.classList.add("show");
 
-      // park NO & dog in corner
+      // park NO & dog
       const a = arena.getBoundingClientRect();
       const btnW = noBtn.offsetWidth;
       const btnH = noBtn.offsetHeight;
@@ -609,23 +446,13 @@
       noBtn.style.filter = "grayscale(.25) opacity(.8)";
       chaseDogTo(a.width - 60, a.height - 55);
 
-      burstFireworks();
       spawnFlowers();
-
-      confetti({
-        particleCount: 190,
-        spread: 85,
-        startVelocity: 45,
-        scalar: 1.1,
-        origin: { x: 0.5, y: 0.55 }
-      });
+      fireworks();
     });
 
-    // ---------- init ----------
     window.addEventListener("load", () => {
       placeNoInitial();
       placeDogCenter();
-      verifyAssets(); // show a clear message if something isn't found
     });
 
     window.addEventListener("resize", () => {
