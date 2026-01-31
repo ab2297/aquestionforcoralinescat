@@ -88,11 +88,12 @@ body{
 }
 
 /* YES & NO image buttons (first page) */
+/* ✅ 40% size vs old 175px -> 70px */
 .yesImgBtn,.noImgBtn{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:175px;
+  width:70px;            /* ~40% of 175px */
   height:auto;
   cursor:pointer;
   user-select:none;
@@ -103,19 +104,20 @@ body{
   z-index: 5;
 }
 .yesImgBtn:hover,.noImgBtn:hover{
-  transform:translateY(-50%) scale(1.05);
-  filter: brightness(1.05) drop-shadow(0 16px 22px rgba(0,0,0,.28));
+  transform:translateY(-50%) scale(1.06);
+  filter: brightness(1.06) drop-shadow(0 16px 22px rgba(0,0,0,.28));
 }
 .yesImgBtn:active,.noImgBtn:active{ transform:translateY(-50%) scale(.95); }
 
 .yesImgBtn{ left:16px; }
-.noImgBtn{ left:50%; z-index: 4; }
-
-@media(max-width:420px){
-  .yesImgBtn,.noImgBtn{ width:150px; }
+.noImgBtn{
+  /* start on right side, not center, for better spacing when small */
+  left: calc(100% - 16px);
+  transform: translate(-100%, -50%);
+  z-index: 4;
 }
 
-/* Dog (first page) */
+/* Dog (first page) — hidden until first NO press */
 .dogChaser{
   position:absolute;
   width:96px;
@@ -123,11 +125,13 @@ body{
   top:50%;
   transform:translate(-50%,-50%);
   pointer-events:none;
-  z-index:2;
+  z-index:7;
   transition: left .18s ease, top .18s ease, transform .12s ease;
+  display:none; /* ✅ hidden until first NO */
 }
-.dogChaser.front{ z-index: 7; }
+.dogChaser.show{ display:block; }
 .dogChaser img{ width:100%; height:auto; display:block; }
+
 .shake{ animation: shake .22s ease; }
 @keyframes shake{
   0%{ transform: translate(-50%,-50%) rotate(0deg); }
@@ -149,13 +153,6 @@ body{
 .ninja.show{display:block;}
 .ninja img{width:50px;height:auto;display:block; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));}
 
-.bijan{
-  z-index: 9;
-}
-.bijan.show{display:block;}
-.bijan img{width:78px;height:auto;display:block; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));}
-
-/* Result block */
 .result{
   display:none;
   font-family:"Fredoka", system-ui, sans-serif;
@@ -163,7 +160,7 @@ body{
 }
 .result.show{display:block;}
 
-/* ✅ AFTER-YES LAYOUT (absolute positioning by % of the CARD) */
+/* ✅ AFTER-YES LAYOUT */
 .afterYesLayer{
   position:absolute;
   inset: 0;
@@ -172,19 +169,17 @@ body{
 }
 .afterYesLayer.show{ display:block; }
 
-/* celebration.gif: x 10-70%, y 20-50% */
 .afterYesCelebration{
   position:absolute;
   left:10%;
   top:20%;
   width:60%;
   height:30%;
-  object-fit: contain;   /* show full gif, no cropping */
+  object-fit: contain;
   object-position: center;
   filter: drop-shadow(0 14px 18px rgba(0,0,0,.25));
 }
 
-/* bijan.png: x 70-90%, y 20-50% */
 .afterYesBijan{
   position:absolute;
   left:70%;
@@ -196,7 +191,6 @@ body{
   filter: drop-shadow(0 12px 16px rgba(0,0,0,.35));
 }
 
-/* text: y 50-60%, x full */
 .afterYesText{
   position:absolute;
   left:0;
@@ -211,28 +205,25 @@ body{
   padding: 0 14px;
 }
 
-/* me.jpg: x 10-90%, y 60-95% */
 .afterYesMe{
   position:absolute;
   left:10%;
   top:60%;
   width:80%;
   height:35%;
-  object-fit: contain;  /* preserve ratio, show full image */
+  object-fit: contain;
   object-position: center;
   filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
 }
 
-/* Ensure the card has enough height on phones for the after-YES layout */
 @media (max-width: 520px){
   .wrap{ padding: 12px; }
-  .card{ padding: 18px; }
-  /* give more vertical room so gif/photo can be seen */
-  .card{ min-height: 78vh; }
+  .card{ padding: 18px; min-height: 78vh; }
   .arena{ height: 160px; margin-bottom: 10px; }
+  .yesImgBtn,.noImgBtn{ width:64px; }
+  .dogChaser{ width:86px; }
 }
 
-/* On very short screens, ensure the after-YES items don't get squished */
 @media (max-height: 700px){
   .card{ min-height: 80vh; }
 }
@@ -248,33 +239,19 @@ body{
 
     <div class="ninja" id="ninja"><img src="ninja.png" alt="ninja"></div>
 
-    <!-- The original bijan spot is no longer used after YES (we use afterYesLayer) -->
-    <div class="bijan" id="bijan"><img src="bijan.png" alt="bijan"></div>
-
     <div class="title" id="titleText">Will you be my valentine?</div>
 
     <div class="arena" id="arena">
       <img id="yesImg" class="yesImgBtn" src="yes.png" alt="yes">
 
+      <!-- dog starts hidden -->
       <div class="dogChaser" id="dogChaser" aria-hidden="true">
         <img src="caspy.png" alt="dog">
       </div>
 
       <img id="noImg" class="noImgBtn" src="no.png" alt="no">
-
-      <!-- Keep for compatibility (we won't rely on it after YES) -->
-      <img id="celebration" style="display:none" src="celebration.gif" alt="celebration">
     </div>
 
-    <!-- Old result kept (not used for layout after YES now) -->
-    <div class="result" id="result">
-      <div style="font-weight:600; font-size:clamp(18px,4vw,22px); margin-top:12px;">
-        Yayyyyy!!! love you my g ❤️
-      </div>
-      <div class="photo"><img src="me.jpg" alt="me"></div>
-    </div>
-
-    <!-- ✅ After-YES layout layer -->
     <div class="afterYesLayer" id="afterYesLayer" aria-hidden="true">
       <img class="afterYesCelebration" id="afterYesCelebration" src="celebration.gif" alt="celebration">
       <img class="afterYesBijan" id="afterYesBijan" src="bijan.png" alt="bijan">
@@ -292,22 +269,26 @@ body{
 
 <script>
 const yesImg = document.getElementById("yesImg");
-const noImg = document.getElementById("noImg");
-const dog = document.getElementById("dogChaser");
-const arena = document.getElementById("arena");
-const flowers = document.getElementById("flowers");
+const noImg  = document.getElementById("noImg");
+const dog    = document.getElementById("dogChaser");
+const arena  = document.getElementById("arena");
+const flowers= document.getElementById("flowers");
 const barkSound = document.getElementById("barkSound");
-const yesSound = document.getElementById("yesSound");
+const yesSound  = document.getElementById("yesSound");
 const titleText = document.getElementById("titleText");
-const ninja = document.getElementById("ninja");
-
+const ninja     = document.getElementById("ninja");
 const afterYesLayer = document.getElementById("afterYesLayer");
 
 let yesClicked = false;
 let noAttemptedOnce = false;
+let lastBarkMs = 0;
 
 function playBark(){
+  const now = Date.now();
+  if (now - lastBarkMs < 420) return;
+  lastBarkMs = now;
   try{ barkSound.currentTime=0; barkSound.play().catch(()=>{}); }catch(e){}
+  if (navigator.vibrate) navigator.vibrate(60);
 }
 function playYes(){
   try{ yesSound.currentTime=0; yesSound.play().catch(()=>{}); }catch(e){}
@@ -351,15 +332,14 @@ function fireworks(){
   confetti({ particleCount: 70, spread: 60, startVelocity: 32, origin:{x:.5,y:.45}, shapes:["heart"] });
 }
 
-/* --- First page: Caspy follows NO like earlier --- */
+/* helpers */
 function toArenaXY(clientX, clientY){
   const a = arena.getBoundingClientRect();
   return { x: clientX - a.left, y: clientY - a.top, w: a.width, h: a.height };
 }
-
 function chaseDogTo(x, y){
   const a = arena.getBoundingClientRect();
-  const pad = 12;
+  const pad = 10;
   const cx = Math.max(pad, Math.min(a.width - pad, x));
   const cy = Math.max(pad, Math.min(a.height - pad, y));
   dog.style.left = cx + "px";
@@ -369,13 +349,26 @@ function chaseDogTo(x, y){
   dog.classList.add("shake");
 }
 
+/* ✅ place dog directly over NO button center */
+function chaseDogToNoCenter(){
+  const a = arena.getBoundingClientRect();
+  const b = noImg.getBoundingClientRect();
+  const cx = (b.left - a.left) + b.width/2;
+  const cy = (b.top  - a.top ) + b.height/2;
+  chaseDogTo(cx, cy);
+}
+
+/* show dog only after first NO press */
 function onFirstNoAttempt(){
   if (noAttemptedOnce) return;
   noAttemptedOnce = true;
+
   ninja.classList.add("show");
-  dog.classList.add("front");
+  dog.classList.add("show"); /* ✅ make caspy appear */
+  chaseDogToNoCenter();      /* ✅ and sit on NO */
 }
 
+/* ✅ move NO away from where user tries, avoid YES, dog follows */
 function moveNoAway(fromX, fromY){
   if (yesClicked) return;
 
@@ -383,34 +376,36 @@ function moveNoAway(fromX, fromY){
   playBark();
 
   const a = arena.getBoundingClientRect();
-  const btnW = noImg.getBoundingClientRect().width || 170;
-  const btnH = noImg.getBoundingClientRect().height || 54;
+  const btnW = noImg.getBoundingClientRect().width || 70;
+  const btnH = noImg.getBoundingClientRect().height || 40;
 
-  const pad = 12;
+  const pad = 10;
   const minX = pad, maxX = a.width - btnW - pad;
   const minY = pad, maxY = a.height - btnH - pad;
 
-  // Avoid overlapping YES
   const yesRect = yesImg.getBoundingClientRect();
   const yesLocal = { x: yesRect.left - a.left, y: yesRect.top - a.top, w: yesRect.width, h: yesRect.height };
 
   let best = null;
-  for (let i=0; i<22; i++){
+  for (let i=0; i<26; i++){
     const rx = minX + Math.random() * (maxX - minX);
     const ry = minY + Math.random() * (maxY - minY);
     const cx = rx + btnW/2, cy = ry + btnH/2;
 
     const dPointer = Math.hypot(cx - fromX, cy - fromY);
     const dYes = Math.hypot(cx - (yesLocal.x + yesLocal.w/2), cy - (yesLocal.y + yesLocal.h/2));
-    const score = dPointer + 0.6*dYes;
 
+    // discourage overlap with YES
     const overlapsYes =
-      rx < (yesLocal.x + yesLocal.w + 10) &&
-      (rx + btnW) > (yesLocal.x - 10) &&
-      ry < (yesLocal.y + yesLocal.h + 10) &&
-      (ry + btnH) > (yesLocal.y - 10);
+      rx < (yesLocal.x + yesLocal.w + 12) &&
+      (rx + btnW) > (yesLocal.x - 12) &&
+      ry < (yesLocal.y + yesLocal.h + 12) &&
+      (ry + btnH) > (yesLocal.y - 12);
 
-    if (!overlapsYes && (!best || score > best.score)){
+    // score: far from pointer + also away from YES a bit
+    const score = dPointer + 0.55 * dYes - (overlapsYes ? 9999 : 0);
+
+    if (!best || score > best.score){
       best = { x: rx, y: ry, score };
     }
   }
@@ -418,67 +413,45 @@ function moveNoAway(fromX, fromY){
   const nx = best ? best.x : (minX + maxX)/2;
   const ny = best ? best.y : (minY + maxY)/2;
 
-  noImg.style.transition = "left .14s ease, top .14s ease";
+  // set NO position (using translateY(-50%) like earlier)
+  noImg.style.transition = "left .14s ease, top .14s ease, transform .14s ease";
   noImg.style.left = nx + "px";
   noImg.style.top  = (ny + btnH/2) + "px";
   noImg.style.transform = "translateY(-50%)";
 
-  // dog chases NO center
+  // dog follows NO center
   chaseDogTo(nx + btnW/2, ny + btnH/2);
 }
 
-function handleThreat(e){
+function handleNoThreat(e){
   if (yesClicked) return;
   const axy = toArenaXY(e.clientX, e.clientY);
   moveNoAway(axy.x, axy.y);
   e.preventDefault?.();
 }
 
-noImg.addEventListener("mouseenter", handleThreat);
-noImg.addEventListener("pointerdown", handleThreat);
+/* NO triggers */
+noImg.addEventListener("mouseenter", handleNoThreat);
+noImg.addEventListener("pointerdown", handleNoThreat);
 noImg.addEventListener("touchstart", (e) => {
   const t = e.touches[0];
-  handleThreat({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
+  handleNoThreat({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
 }, { passive:false });
 
+/* also if the pointer gets close to NO, push it */
 arena.addEventListener("pointermove", (e) => {
   if (yesClicked) return;
   const a = arena.getBoundingClientRect();
   const b = noImg.getBoundingClientRect();
+
   const ax = e.clientX - a.left;
   const ay = e.clientY - a.top;
   const bx = (b.left - a.left) + b.width/2;
   const by = (b.top - a.top) + b.height/2;
-  if (Math.hypot(ax - bx, ay - by) < 115) moveNoAway(ax, ay);
+
+  if (Math.hypot(ax - bx, ay - by) < 105) moveNoAway(ax, ay);
 });
 
-/* ✅ Mobile fix: shrink YES/NO if overlap risk */
-function fitChoiceImages(){
-  if (yesClicked) return;
-
-  const a = arena.getBoundingClientRect();
-  const pad = 16;
-  const gap = 12;
-  const noLeftFrac = 0.50;
-
-  yesImg.style.width = "175px";
-  noImg.style.width  = "175px";
-
-  const yesW = yesImg.getBoundingClientRect().width;
-  const noW  = noImg.getBoundingClientRect().width;
-  if (!yesW || !noW) return;
-
-  const maxWFromOverlap = (noLeftFrac * a.width) - pad - gap;
-  const maxWFromRightEdge = a.width - (noLeftFrac * a.width) - pad;
-  const maxWFromLeft = a.width - 2*pad;
-
-  const maxW = Math.floor(Math.max(110, Math.min(175, maxWFromOverlap, maxWFromRightEdge, maxWFromLeft)));
-
-  yesImg.style.width = maxW + "px";
-  noImg.style.width  = maxW + "px";
-}
-
-/* --- YES click: show new after-YES distribution --- */
 function onYes(){
   if (yesClicked) return;
   yesClicked = true;
@@ -488,13 +461,13 @@ function onYes(){
   titleText.classList.add("hide");
   setTimeout(()=>{ titleText.remove(); }, 450);
 
-  // remove first-page UI elements
+  // remove first-page UI
   yesImg.remove();
   noImg.remove();
   dog.remove();
   ninja.classList.remove("show");
 
-  // show after-YES layout layer
+  // show after-YES layout
   afterYesLayer.classList.add("show");
 
   spawnLoveRain();
@@ -503,18 +476,6 @@ function onYes(){
 
 yesImg.addEventListener("click", onYes);
 yesImg.addEventListener("pointerdown", (e)=>{ e.preventDefault?.(); onYes(); });
-
-window.addEventListener("load", () => {
-  fitChoiceImages();
-  setTimeout(fitChoiceImages, 60);
-  setTimeout(fitChoiceImages, 200);
-});
-
-window.addEventListener("resize", () => {
-  fitChoiceImages();
-});
-yesImg.addEventListener("load", fitChoiceImages);
-noImg.addEventListener("load", fitChoiceImages);
 </script>
 
 </body>
