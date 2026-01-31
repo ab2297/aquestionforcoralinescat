@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Valentine?</title>
 
-  <!-- Fun font (optional) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -37,9 +36,53 @@
       overflow:hidden;
     }
 
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.45;
+    }
+    .heart{
+      position:absolute;
+      font-size: 18px;
+      animation: drift 10s linear infinite;
+      filter: blur(.15px);
+    }
+    @keyframes drift{
+      from{ transform: translateY(110vh) translateX(0) rotate(0deg); opacity:0; }
+      10%{ opacity:1; }
+      to  { transform: translateY(-20vh) translateX(30px) rotate(180deg); opacity:0; }
+    }
+
+    .flowers{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      display:none;
+      z-index: 999;
+    }
+    .flowers.show{ display:block; }
+    .flower{
+      position:absolute;
+      bottom:-40px;
+      font-size: 28px;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+    }
+    @keyframes floatUp{
+      to{
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
     .wrap{
-      width:min(520px, 92vw);
+      width:min(560px, 94vw);
       padding:22px;
+      position:relative;
+      z-index:1;
     }
 
     .card{
@@ -48,7 +91,7 @@
       border: 1px solid rgba(255,255,255,.55);
       border-radius: 24px;
       box-shadow: var(--shadow);
-      padding: 22px 18px;
+      padding: 22px 18px 18px;
       text-align:center;
       position:relative;
       overflow:hidden;
@@ -56,55 +99,122 @@
 
     .title{
       font-family: Pacifico, cursive;
-      font-size: clamp(34px, 6vw, 48px);
-      margin: 6px 0 10px;
+      font-size: clamp(34px, 6vw, 50px);
+      margin: 6px 0 8px;
       line-height:1.05;
     }
 
     .subtitle{
-      margin: 0 0 16px;
-      opacity:.8;
+      margin: 0 0 14px;
+      opacity:.82;
       font-size: 14px;
     }
 
-    .btnRow{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      margin-top: 14px;
-      position:relative;
-      padding-bottom: 6px;
+    /* Ninja watcher */
+    .ninja{
+      position:absolute;
+      right: 14px;
+      top: 14px;
+      width: 92px;
+      height: 92px;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,.2);
+      border: 3px solid rgba(255,255,255,.7);
+      background:#fff;
+      transform: rotate(2deg);
+      z-index: 3;
+    }
+    .ninja img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .ninjaTag{
+      position:absolute;
+      right: 16px;
+      top: 112px;
+      font-size: 12px;
+      opacity:.78;
+      font-weight:800;
+      z-index: 3;
+      user-select:none;
     }
 
-    button{
+    /* Arena for buttons so NO can run around */
+    .arena{
+      position:relative;
+      margin: 12px auto 0;
+      width: min(520px, 92vw);
+      height: 150px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(255,255,255,.55);
+      overflow:hidden;
+    }
+
+    .btn{
       -webkit-tap-highlight-color: transparent;
       border:0;
       border-radius: 999px;
       padding: 14px 22px;
-      font-weight:800;
+      font-weight:900;
       font-size: 18px;
-      width: min(180px, 38vw);
+      width: 170px;
+      max-width: 40vw;
       cursor:pointer;
       box-shadow: 0 10px 25px rgba(0,0,0,.12);
       transition: transform .12s ease, filter .12s ease;
       user-select:none;
-      position:relative;
+      position:absolute;
+      top: 50%;
+      transform: translateY(-50%);
       z-index:2;
+      touch-action: manipulation;
     }
-    button:active{ transform: scale(.98); }
+    .btn:active{ transform: translateY(-50%) scale(.98); }
 
     #yesBtn{
+      left: 16px;
       background: linear-gradient(180deg, var(--yes), var(--yes2));
       color:white;
+      z-index: 4;
     }
+
     #noBtn{
+      left: 50%;
       background: linear-gradient(180deg, var(--no), var(--no2));
       color:white;
     }
 
-    /* Result area */
+    /* Dog chaser */
+    .dogChaser{
+      position:absolute;
+      width: 86px;
+      height: 86px;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,.22);
+      border: 3px solid rgba(255,255,255,.7);
+      background:#fff;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index:1;
+      transition: left .18s ease, top .18s ease, transform .12s ease;
+      pointer-events:none;
+      opacity: .98;
+    }
+    .dogChaser img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
     .result{
-      margin-top: 18px;
+      margin-top: 16px;
       display:none;
       flex-direction:column;
       align-items:center;
@@ -135,91 +245,37 @@
     }
 
     .msg{
-      font-weight:800;
+      font-weight:900;
       font-size: 18px;
     }
     .msg small{
       display:block;
-      font-weight:600;
-      opacity:.8;
+      font-weight:700;
+      opacity:.82;
       margin-top:6px;
     }
 
-    /* Floating flower emojis */
-    .flowers{
-      pointer-events:none;
-      position:fixed;
-      inset:0;
-      overflow:hidden;
-      display:none;
-      z-index: 999;
-    }
-    .flowers.show{ display:block; }
-
-    .flower{
-      position:absolute;
-      bottom:-40px;
-      font-size: 28px;
-      animation: floatUp linear forwards;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
-    }
-    @keyframes floatUp{
-      to{
-        transform: translateY(-110vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    /* Dog blocker that covers the NO button */
-    .dogBlocker{
-      position:absolute;
-      width: 120px;
-      height: 120px;
-      border-radius: 18px;
-      overflow:hidden;
-      box-shadow: 0 16px 40px rgba(0,0,0,.22);
-      border: 4px solid rgba(255,255,255,.7);
-      display:none;
-      z-index: 5;
-      transform: translate(-50%, -50%) scale(.8);
-      animation: dogIn .25s ease forwards;
-      background:#fff;
-    }
-    .dogBlocker img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    @keyframes dogIn{
-      to { transform: translate(-50%, -50%) scale(1); }
-    }
-
-    /* Cute hearts drifting in background */
-    .hearts{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:0;
-      opacity:.45;
-    }
-    .heart{
-      position:absolute;
-      font-size: 18px;
-      animation: drift 10s linear infinite;
-      filter: blur(.15px);
-    }
-    @keyframes drift{
-      from{ transform: translateY(110vh) translateX(0) rotate(0deg); opacity:0; }
-      10%{ opacity:1; }
-      to  { transform: translateY(-20vh) translateX(30px) rotate(180deg); opacity:0; }
-    }
-
-    /* Small footer note */
     .hint{
       margin-top: 10px;
       font-size: 12px;
-      opacity:.7;
+      opacity:.72;
+    }
+
+    .shake{
+      animation: shake .22s ease;
+    }
+    @keyframes shake{
+      0%{ transform: translate(-50%,-50%) rotate(0deg); }
+      25%{ transform: translate(-50%,-50%) rotate(2deg); }
+      50%{ transform: translate(-50%,-50%) rotate(-2deg); }
+      100%{ transform: translate(-50%,-50%) rotate(0deg); }
+    }
+
+    @media (max-width: 420px){
+      .arena{ height: 165px; }
+      .btn{ width: 150px; font-size: 17px; }
+      .ninja{ width: 78px; height: 78px; }
+      .ninjaTag{ top: 98px; }
     }
   </style>
 </head>
@@ -230,17 +286,22 @@
 
   <div class="wrap">
     <div class="card">
+      <div class="ninja" title="ninja watching">
+        <img src="ninja.jpg" alt="Ninja me watching" />
+      </div>
+      <div class="ninjaTag">ninja is watching 👀⚔️</div>
+
       <div class="title">Will you be my valentine?</div>
-      <p class="subtitle">Choose wisely 😌💘</p>
+      <p class="subtitle">Be honest… but also… think carefully 😌💘</p>
 
-      <div class="btnRow" id="btnRow">
-        <button id="yesBtn">Yes</button>
-        <button id="noBtn">No</button>
+      <div class="arena" id="arena">
+        <button class="btn" id="yesBtn">Yes</button>
 
-        <!-- Dog blocker sits ABOVE the No button -->
-        <div class="dogBlocker" id="dogBlocker" aria-hidden="true">
-          <img src="dog.png" alt="A very persuasive dog" />
+        <div class="dogChaser" id="dogChaser" aria-hidden="true">
+          <img src="dog.png" alt="dog chaser" />
         </div>
+
+        <button class="btn" id="noBtn">No</button>
       </div>
 
       <div class="result" id="result">
@@ -253,9 +314,12 @@
         </div>
       </div>
 
-      <div class="hint">Tip: this page is made to open nicely on a phone.</div>
+      <div class="hint">If “No” feels impossible… that’s a feature.</div>
     </div>
   </div>
+
+  <!-- Bark sound (plays when NO is attempted) -->
+  <audio id="barkSound" src="bark.wav" preload="auto"></audio>
 
   <!-- Confetti / fireworks -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -277,51 +341,162 @@
 
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
+    const arena = document.getElementById('arena');
+    const dogChaser = document.getElementById('dogChaser');
     const result = document.getElementById('result');
     const flowers = document.getElementById('flowers');
-    const dogBlocker = document.getElementById('dogBlocker');
-    const btnRow = document.getElementById('btnRow');
+    const barkSound = document.getElementById('barkSound');
 
-    let noBlocked = false;
     let yesClicked = false;
+    let lastBarkMs = 0;
 
-    function centerDogOnNo(){
-      const r = noBtn.getBoundingClientRect();
-      const row = btnRow.getBoundingClientRect();
-      // position relative to btnRow
-      const x = (r.left + r.width/2) - row.left;
-      const y = (r.top + r.height/2) - row.top;
-      dogBlocker.style.left = x + 'px';
-      dogBlocker.style.top  = y + 'px';
+    function playBark(){
+      // throttle so it doesn't spam-play dozens of overlapping barks
+      const now = Date.now();
+      if (now - lastBarkMs < 450) return;
+      lastBarkMs = now;
+
+      try{
+        barkSound.currentTime = 0;
+        barkSound.play().catch(()=>{});
+      }catch(e){}
+      // optional: phone vibration (won't work everywhere)
+      if (navigator.vibrate) navigator.vibrate(60);
     }
 
-    function blockNo(){
-      if (noBlocked || yesClicked) return;
-      noBlocked = true;
-      centerDogOnNo();
-      dogBlocker.style.display = 'block';
+    function placeNoInitial(){
+      const a = arena.getBoundingClientRect();
+      const btnW = noBtn.offsetWidth || 170;
+      const btnH = noBtn.offsetHeight || 54;
 
-      // Make the NO button "try" to escape a bit
-      noBtn.style.transform = `translateX(${(Math.random()>.5?1:-1)*10}px) translateY(-2px)`;
-      setTimeout(() => { noBtn.style.transform = ""; }, 200);
+      const x = a.width - btnW - 16;
+      const y = (a.height - btnH)/2;
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = (y + btnH/2) + 'px';
+      noBtn.style.transform = 'translateY(-50%)';
     }
 
-    // If she tries to click NO, dog blocks it
-    noBtn.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      blockNo();
+    function placeDogCenter(){
+      const a = arena.getBoundingClientRect();
+      dogChaser.style.left = (a.width/2) + 'px';
+      dogChaser.style.top  = (a.height/2) + 'px';
+    }
+
+    function toArenaXY(clientX, clientY){
+      const a = arena.getBoundingClientRect();
+      return { x: clientX - a.left, y: clientY - a.top, w: a.width, h: a.height };
+    }
+
+    function chaseDogTo(x, y){
+      const a = arena.getBoundingClientRect();
+      const padding = 10;
+      const clampedX = Math.max(padding, Math.min(a.width - padding, x));
+      const clampedY = Math.max(padding, Math.min(a.height - padding, y));
+      dogChaser.style.left = clampedX + 'px';
+      dogChaser.style.top  = clampedY + 'px';
+    }
+
+    function moveNoAway(fromX, fromY){
+      if (yesClicked) return;
+
+      playBark(); // 🐶 BARK!
+
+      const a = arena.getBoundingClientRect();
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+
+      const padding = 12;
+      const minX = padding;
+      const maxX = a.width - btnW - padding;
+      const minY = padding;
+      const maxY = a.height - btnH - padding;
+
+      // YES button area in arena coords
+      const yesRect = yesBtn.getBoundingClientRect();
+      const yesLocal = {
+        x: yesRect.left - a.left,
+        y: yesRect.top - a.top,
+        w: yesRect.width,
+        h: yesRect.height
+      };
+
+      let best = null;
+      for (let i=0; i<18; i++){
+        const rx = minX + Math.random() * (maxX - minX);
+        const ry = minY + Math.random() * (maxY - minY);
+
+        const centerX = rx + btnW/2;
+        const centerY = ry + btnH/2;
+
+        const dPointer = Math.hypot(centerX - fromX, centerY - fromY);
+        const yesCX = yesLocal.x + yesLocal.w/2;
+        const yesCY = yesLocal.y + yesLocal.h/2;
+        const dYes = Math.hypot(centerX - yesCX, centerY - yesCY);
+
+        const score = dPointer + 0.6*dYes;
+
+        const overlapsYes =
+          rx < (yesLocal.x + yesLocal.w + 8) &&
+          (rx + btnW) > (yesLocal.x - 8) &&
+          ry < (yesLocal.y + yesLocal.h + 8) &&
+          (ry + btnH) > (yesLocal.y - 8);
+
+        if (!overlapsYes && (best === null || score > best.score)){
+          best = { x: rx, y: ry, score };
+        }
+      }
+
+      const nx = (best ? best.x : (minX + maxX)/2);
+      const ny = (best ? best.y : (minY + maxY)/2);
+
+      noBtn.style.transition = 'left .16s ease, top .16s ease';
+      noBtn.style.left = nx + 'px';
+      noBtn.style.top  = (ny + btnH/2) + 'px';
+      noBtn.style.transform = 'translateY(-50%)';
+
+      // dog chases the NO button center
+      chaseDogTo(nx + btnW/2, ny + btnH/2);
+
+      // little shake for comedy
+      dogChaser.classList.remove('shake');
+      void dogChaser.offsetWidth;
+      dogChaser.classList.add('shake');
+    }
+
+    function handleThreat(e){
+      if (yesClicked) return;
+      const axy = toArenaXY(e.clientX, e.clientY);
+      moveNoAway(axy.x, axy.y);
+      if (e.preventDefault) e.preventDefault();
+    }
+
+    // Run away triggers
+    noBtn.addEventListener('mouseenter', handleThreat);
+    noBtn.addEventListener('pointerdown', handleThreat);
+    noBtn.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      handleThreat({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
+    }, { passive:false });
+
+    // If pointer gets close to NO, it runs
+    arena.addEventListener('pointermove', (e) => {
+      if (yesClicked) return;
+
+      const a = arena.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+
+      const ax = e.clientX - a.left;
+      const ay = e.clientY - a.top;
+
+      const bx = (btn.left - a.left) + btn.width/2;
+      const by = (btn.top - a.top) + btn.height/2;
+
+      const d = Math.hypot(ax - bx, ay - by);
+      if (d < 95) moveNoAway(ax, ay);
     });
 
-    // If she hovers/aims toward NO, dog preemptively blocks
-    noBtn.addEventListener('pointerenter', blockNo);
-    noBtn.addEventListener('touchstart', blockNo, { passive:false });
-
-    window.addEventListener('resize', () => {
-      if (dogBlocker.style.display === 'block') centerDogOnNo();
-    });
-
+    // YES celebration
     function burstFireworks(){
-      // A few bursts to feel like fireworks
       const duration = 1400;
       const end = Date.now() + duration;
 
@@ -351,8 +526,6 @@
         f.style.animationDuration = (2.4 + Math.random()*1.6) + 's';
         f.style.fontSize = (22 + Math.random()*22) + 'px';
         flowers.appendChild(f);
-
-        // cleanup
         setTimeout(() => f.remove(), 4200);
 
         if (Date.now() - start > runMs){
@@ -366,14 +539,22 @@
       if (yesClicked) return;
       yesClicked = true;
 
-      // hide dog if it appeared
-      dogBlocker.style.display = 'none';
-
       result.classList.add('show');
+
+      // park NO at bottom-right as "defeated"
+      const a = arena.getBoundingClientRect();
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+      noBtn.style.left = (a.width - btnW - 14) + 'px';
+      noBtn.style.top  = (a.height - btnH/2 - 12) + 'px';
+      noBtn.style.filter = 'grayscale(.25) opacity(.8)';
+
+      // dog goes to corner too
+      chaseDogTo(a.width - 60, a.height - 55);
+
       burstFireworks();
       spawnFlowers();
 
-      // One big center burst
       confetti({
         particleCount: 180,
         spread: 85,
@@ -382,7 +563,18 @@
         origin: { x: 0.5, y: 0.55 }
       });
     });
+
+    window.addEventListener('load', () => {
+      placeNoInitial();
+      placeDogCenter();
+    });
+
+    window.addEventListener('resize', () => {
+      if (!yesClicked){
+        placeNoInitial();
+        placeDogCenter();
+      }
+    });
   </script>
 </body>
 </html>
-
